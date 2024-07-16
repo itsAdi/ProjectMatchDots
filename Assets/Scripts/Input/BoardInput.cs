@@ -1,11 +1,10 @@
-using System;
-using UnityEditor;
+using KemothStudios.Board;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class BoardInput : MonoBehaviour
 {
-    public static Action<Vector2> OnInput;
+    [SerializeField] private BoardDataSO _boardData;
 
     private void Update()
     {
@@ -21,7 +20,8 @@ public class BoardInput : MonoBehaviour
             if (new Plane(Vector3.back, Vector3.zero).Raycast(r, out float hit))
             {
                 Vector3 hitPoint = r.GetPoint(hit);
-                OnInput?.Invoke(hitPoint);
+                if(_boardData.TryGetCellIndex(hitPoint, out int cellIndex))
+                    _boardData.GetCell(cellIndex).CellClicked();
             }
         }
     }

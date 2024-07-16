@@ -9,8 +9,8 @@ namespace KemothStudios.Board
 
         private void Start()
         {
-            float boardWidth = _boardConfig.cellWidth * _boardConfig.columns;
-            float boardHeight = _boardConfig.cellHeight * _boardConfig.rows;
+            float boardWidth = _boardConfig.cellWidth * _boardConfig.columns + 5f;
+            float boardHeight = _boardConfig.cellHeight * _boardConfig.rows + 5f;
             float screenRatio = (float)Screen.width / Screen.height;
             float targetRatio = boardWidth / boardHeight;
             if (screenRatio >= targetRatio)

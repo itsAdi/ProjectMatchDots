@@ -247,6 +247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boardConfig: {fileID: 11400000, guid: ab8fc292ade90524c9703e5a6c30737c, type: 2}
+  _boardData: {fileID: 11400000, guid: d2d1d0d8be2a55d448e8db404535a729, type: 2}
 --- !u!4 &557032980
 Transform:
   m_ObjectHideFlags: 0
@@ -288,6 +289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07c173f2c397e9444b80f2a6a7706528, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _boardData: {fileID: 11400000, guid: d2d1d0d8be2a55d448e8db404535a729, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
