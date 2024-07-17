@@ -4,22 +4,18 @@ namespace KemothStudios.Board
 {
     public sealed class Cell
     {
-        private GameObject _cellVisuals;
         private Line[] _lines;
         private Rect _cellTransform;
         private BoardDataSO _boardData;
 
         public Rect CellTransform => _cellTransform;
+        public BoardDataSO BoardData => _boardData;
 
         public Cell(Vector3 position, Vector2 scale, BoardDataSO boardData)
         {
             _boardData = boardData;
-            _cellVisuals = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             _cellTransform = new Rect(position.x - scale.x * 0.5f, position.y - scale.y * 0.5f, scale.x, scale.y);
-            _cellVisuals.transform.position = _cellTransform.center;
-            _cellVisuals.transform.localScale = Vector3.one * 0.5f;
             _boardData.TryGetCellIndex(_cellTransform.center, out int index);
-            _cellVisuals.name = $"Cell";
             CreateLines();
         }
 
@@ -27,12 +23,18 @@ namespace KemothStudios.Board
         {
             _boardData = null;
             _lines = null;
-            _cellVisuals = null;
         }
 
-        public void CellClicked()
+        public void CellClicked(Vector2 clickPoint)
         {
-            _cellVisuals.GetComponent<Renderer>().material.color = Color.red;
+            Line verticalLine = _lines[clickPoint.x > _cellTransform.center.x ? 1 : 3];
+            Line horizontalLine = _lines[clickPoint.y > _cellTransform.center.y ? 0 : 2];
+            Vector2 pointOnVerticalLine = new Vector2(verticalLine.LinePosition.x, clickPoint.y);
+            Vector2 pointOnHoriontalLine = new Vector2(clickPoint.x, horizontalLine.LinePosition.y);
+
+            if ((pointOnVerticalLine - clickPoint).sqrMagnitude > (pointOnHoriontalLine - clickPoint).sqrMagnitude)
+                horizontalLine.LineClicked();
+            else verticalLine.LineClicked();
         }
 
         private void CreateLines()

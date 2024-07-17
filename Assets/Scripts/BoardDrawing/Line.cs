@@ -4,28 +4,35 @@ namespace KemothStudios.Board
 {
     public sealed class Line
     {
-        private Material _lineMaterial;
         private Cell[] _sharedByCells;
+        private Vector2 _linePosition;
+        private Vector2 _lineScale;
+        private bool _clicked;
 
-        public Line(Vector3 position, Vector3 scale, Cell cell)
+        public Vector2 LinePosition => _linePosition;
+
+        public Vector2 LineScale => _lineScale;
+
+        public Line(Vector3 position, Vector2 scale, Cell cell)
         {
-            GameObject line = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            line.transform.position = position;
-            line.transform.localScale = scale;
-            _lineMaterial = line.GetComponent<Renderer>().material;
+            _linePosition = position;
+            _lineScale = scale;
             _sharedByCells = new Cell[] { cell, null };
-            line.name = "Line";
+            cell.BoardData.AddLineToCollection(this);
         }
 
         ~Line()
         {
             _sharedByCells = null;
-            _lineMaterial = null;
         }
 
         public void LineClicked()
         {
-            _lineMaterial.color = Color.green;
+            if (!_clicked)
+            {
+                _clicked = true;
+                GameManager.Instance.OnLineClicked(this);
+            }
         }
 
         public void AddSharedCell(Cell cell) => _sharedByCells[1] = cell;

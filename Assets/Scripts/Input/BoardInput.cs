@@ -21,7 +21,7 @@ public class BoardInput : MonoBehaviour
             {
                 Vector3 hitPoint = r.GetPoint(hit);
                 if(_boardData.TryGetCellIndex(hitPoint, out int cellIndex))
-                    _boardData.GetCell(cellIndex).CellClicked();
+                    _boardData.GetCell(cellIndex).CellClicked(hitPoint);
             }
         }
     }
