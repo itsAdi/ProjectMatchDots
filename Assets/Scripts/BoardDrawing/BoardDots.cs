@@ -5,6 +5,7 @@ namespace KemothStudios.Board
     public class BoardDots : MonoBehaviour, IBoardGraphic
     {
         [SerializeField] private BoardDataSO _boardData;
+        [SerializeField] private GameObject _dotPrefab;
         public void DrawBoardGraphic()
         {
             Cell cell = _boardData.GetCell(0);
@@ -14,11 +15,17 @@ namespace KemothStudios.Board
             {
                 for (int y = 0; y <= _boardData.RowsCount; y++)
                 {
-                    GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    Destroy(obj.GetComponent<Collider>());
+                    GameObject obj;
+                    if (_dotPrefab != null) obj = Instantiate(_dotPrefab);
+                    else
+                    {
+                        obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        Destroy(obj.GetComponent<Collider>());
+                    }
                     obj.transform.position = position;
                     obj.transform.localScale = Vector3.one * 0.2f;
                     position.y -= cell.CellTransform.height;
+                    obj.transform.parent = _boardData.BoardParent;
                 }
                 position.x += cell.CellTransform.width;
                 position.y = originalY;

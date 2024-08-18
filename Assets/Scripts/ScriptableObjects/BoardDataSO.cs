@@ -19,9 +19,11 @@ namespace KemothStudios.Board
         public int RowsCount => _rowsCount;
         public int ColumnsCount => _columnsCount;
 
+        public Transform BoardParent {  get; private set; }             
+
         public IEnumerable<Line> Lines => _lines;
 
-        public void GenerateBoardData(int rows, int columns, float cellWidth, float cellHeight)
+        public void GenerateBoardData(int rows, int columns, float cellWidth, float cellHeight, Transform boardParent)
         {
             _rowsCount = rows;
             _columnsCount = columns;
@@ -29,6 +31,7 @@ namespace KemothStudios.Board
             _cellHeight = cellHeight;
             _boardWidth = cellWidth * columns;
             _boardHeight = cellHeight * rows;
+            BoardParent = boardParent;
             InitializeLinesCollection();
             CreateCells();
         }
@@ -47,6 +50,8 @@ namespace KemothStudios.Board
 
             _cells = null;
             _lines = null;
+
+            BoardParent = null;
         }
 
         public bool TryGetCellIndex(Vector2 cellCoordinates, out int index)

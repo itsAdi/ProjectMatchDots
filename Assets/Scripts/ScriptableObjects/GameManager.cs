@@ -14,5 +14,10 @@ namespace KemothStudios
         {
             Instance = this;
         }
+
+        private void Start()
+        {
+            GameStates.Instance.CurrentState = GameStates.States.MAIN_MENU;
+        }
     }
 }

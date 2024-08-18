@@ -15,7 +15,7 @@ namespace KemothStudios.Board
 
         private void Start()
         {
-            _boardData.GenerateBoardData(_boardConfig.rows, _boardConfig.columns, _boardConfig.cellWidth, _boardConfig.cellHeight);
+            _boardData.GenerateBoardData(_boardConfig.rows, _boardConfig.columns, _boardConfig.cellWidth, _boardConfig.cellHeight, transform);
             foreach (Object graphicDrawer in _boardGraphicDrawer)
             {
                 ((IBoardGraphic)graphicDrawer).DrawBoardGraphic();
