@@ -1,5 +1,6 @@
 ﻿using KemothStudios.Board;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace KemothStudios
@@ -9,6 +10,7 @@ namespace KemothStudios
         public static GameManager Instance { get; private set; }
 
         public Action<Line> OnLineClicked;
+        public Action<IEnumerable<Cell>> OnCellCompleted;
 
         private void Awake()
         {

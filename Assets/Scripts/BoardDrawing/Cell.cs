@@ -70,5 +70,22 @@ namespace KemothStudios.Board
 
         public Line GetLineRigth => _lines[1];
         public Line GetLineBottom => _lines[2];
+
+        public bool IsCellCompleted
+        {
+            get
+            {
+                bool result = true;
+                foreach (Line line in _lines)
+                {
+                    if (!line.Clicked)
+                    {
+                        result = false;
+                        break;
+                    }
+                }
+                return result;
+            }
+        }
     }
 }

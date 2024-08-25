@@ -18,7 +18,8 @@ namespace KemothStudios.Board
 
         private void OnDestroy()
         {
-            GameManager.Instance.OnLineClicked -= ShowLine;
+            if (GameManager.Instance != null)
+                GameManager.Instance.OnLineClicked -= ShowLine;
         }
 
         private void ShowLine(Line line)
@@ -38,7 +39,7 @@ namespace KemothStudios.Board
                     Destroy(obj.GetComponent<Collider>());
                 }
                 obj.transform.position = line.LinePosition;
-                obj.transform.localScale = new Vector3(line.LineScale.x,line.LineScale.y, 1f);
+                obj.transform.localScale = new Vector3(line.LineScale.x, line.LineScale.y, 1f);
                 obj.SetActive(false);
                 _lineVisuals.Add(line.GetHashCode(), obj);
                 obj.transform.parent = _boardData.BoardParent;

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -15,7 +16,10 @@ namespace KemothStudios
         private TextField _playerAName, _playerBName;
         private Button _startGameButton;
         private RadioButton[] _playerAvatarControls;
-        private int _playerAAvatarIndex = 0, _playerBAvatarIndex = 1; // two players cannot have same avatar so starting with different avatars
+        private RadioButton _playerAAvatarTab, _playerBAvatarTab;
+        private int[] _playerAvatarIndices = new int[] { 0, 1 }; // Indices of the selected playar avatar
+        private int _enabledPlayareAvatarTab; // actually the index to use in _playerAvatarIndices
+        private bool _updatingAvatarsView;
 
         private void Start()
         {
@@ -23,7 +27,28 @@ namespace KemothStudios
             _playerBName = _uiDoument.rootVisualElement.Q<TextField>("playerBName");
             _startGameButton = _uiDoument.rootVisualElement.Q<Button>("startGameButton");
 
-            if (_playerAvatars.GetAvatarsCount > 0)
+            // Setting up player avatar tabs
+            UQueryBuilder<RadioButton> q = _uiDoument.rootVisualElement.Query<RadioButton>("playerIconTab");
+            _playerAAvatarTab = q.AtIndex(0);
+            _playerBAvatarTab = q.AtIndex(1);
+            _playerAAvatarTab.RegisterValueChangedCallback(x =>
+            {
+                if (x.newValue)
+                {
+                    _enabledPlayareAvatarTab = 0;
+                    UpdateAvatarsView();
+                }
+            });
+            _playerBAvatarTab.RegisterValueChangedCallback(x =>
+            {
+                if (x.newValue)
+                {
+                    _enabledPlayareAvatarTab = 1;
+                    UpdateAvatarsView();
+                }
+            });
+
+            if (_playerAvatars.GetAvatarsCount >= 2) // Checking for more than 2 because we have a 2 player setup and we need atleast 2 avatars in collection
             {
                 _playerAvatarControls = new RadioButton[_playerAvatars.GetAvatarsCount];
                 VisualElement group = _uiDoument.rootVisualElement.Query<VisualElement>("iconsGrid").Children<GroupBox>();
@@ -35,16 +60,20 @@ namespace KemothStudios
                     {
                         r.Q(className: "unity-radio-button__checkmark-background").style.backgroundImage = new StyleBackground(avatarImage);
                     }
-                    if (i == 0) r.value = true;
                     int index = i;
                     r.RegisterValueChangedCallback(x =>
                     {
                         if (x.newValue)
-                            Debug.Log(index);
+                        {
+                            if (!_updatingAvatarsView)
+                                _playerAvatarIndices[_enabledPlayareAvatarTab] = index;
+                            _updatingAvatarsView = false;
+                        }
                     });
                     _playerAvatarControls[i] = r;
                     group.Add(r);
                 }
+                UpdateAvatarsView();
             }
 
             _startGameButton.clicked += StartGame;
@@ -54,6 +83,23 @@ namespace KemothStudios
         {
             _startGameButton.clicked -= StartGame;
         }
+
+        private void UpdateAvatarsView()
+        {
+            if (_playerAvatarControls != null)
+            {
+                _updatingAvatarsView = true;
+                int index = _playerAvatarIndices[_enabledPlayareAvatarTab];
+                _playerAvatarControls[index].SetEnabled(true);
+                _playerAvatarControls[index].value = true;
+                foreach (int iteratedIndex in _playerAvatarIndices)
+                {
+                    if(iteratedIndex != index) _playerAvatarControls[iteratedIndex].SetEnabled(false);
+                }
+            }
+        }
+
+        private void AssignSelectedAvatarIndex(int index, ref int avatarIndexForEnabledTab) => avatarIndexForEnabledTab = index;
 
         private void StartGame()
         {
@@ -68,6 +114,9 @@ namespace KemothStudios
                 Debug.Log("<color=red>Player names must be atleast of 3 characters</color>");
                 return;
             }
+            Player playerA = new(_playerAName.text, _playerAvatarIndices[0]);
+            Player playerB = new(_playerBName.text, _playerAvatarIndices[1]);
+            _gameData.InitializePlayerData(playerA, playerB);
 
             GameStates.Instance.CurrentState = GameStates.States.GAME;
         }

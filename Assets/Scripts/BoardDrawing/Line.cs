@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace KemothStudios.Board
 {
@@ -7,7 +8,7 @@ namespace KemothStudios.Board
         private Cell[] _sharedByCells;
         private Vector2 _linePosition;
         private Vector2 _lineScale;
-        private bool _clicked;
+        public bool Clicked{get; private set; }
 
         public Vector2 LinePosition => _linePosition;
 
@@ -17,7 +18,7 @@ namespace KemothStudios.Board
         {
             _linePosition = position;
             _lineScale = scale;
-            _sharedByCells = new Cell[] { cell, null };
+            _sharedByCells = new Cell[] { cell };
             cell.BoardData.AddLineToCollection(this);
         }
 
@@ -28,13 +29,20 @@ namespace KemothStudios.Board
 
         public void LineClicked()
         {
-            if (!_clicked)
+            if (!Clicked)
             {
-                _clicked = true;
+                Clicked = true;
                 GameManager.Instance.OnLineClicked(this);
             }
         }
 
-        public void AddSharedCell(Cell cell) => _sharedByCells[1] = cell;
+        // Because we know that one line can only have two shared cells that is why we are just updating array in this way
+        public void AddSharedCell(Cell cell)
+        {
+            Cell cellAlreadyInCollection = _sharedByCells[0];
+            _sharedByCells = new[] { cellAlreadyInCollection, cell };
+        }
+
+        public IEnumerable<Cell> SharedCells => _sharedByCells;
     }
 }
