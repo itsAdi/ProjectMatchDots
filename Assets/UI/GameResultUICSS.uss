@@ -1,0 +1,32 @@
+.window {
+    background-color: rgb(253, 225, 35);
+    width: 800px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    flex-direction: column;
+    padding-top: 15px;
+    padding-right: 15px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+}
+
+.score {
+    flex-direction: row;
+    height: 250px;
+}
+
+#home {
+    height: 100px;
+    overflow: hidden;
+    align-items: center;
+}
+
+.scoreDetailContainer {
+    width: 100%;
+}
+
+#home > Button {
+    width: 90%;
+}

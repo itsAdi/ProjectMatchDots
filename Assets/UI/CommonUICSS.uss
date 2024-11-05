@@ -1,0 +1,4 @@
+.majorButton {
+    font-size: 95px;
+    background-color: rgb(154, 65, 0);
+}

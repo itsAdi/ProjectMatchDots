@@ -1,0 +1,23 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/GameResultUICSS.uss?fileID=7433441132597879392&amp;guid=186e0a750b5dbb249b4a7d5fb0688fbe&amp;type=3#GameResultUICSS" />
+    <Style src="project://database/Assets/UI/CommonUICSS.uss?fileID=7433441132597879392&amp;guid=2ae463346034a1b42985f16525aed222&amp;type=3#CommonUICSS" />
+    <engine:VisualElement style="height: 100%; justify-content: center; align-items: center;">
+        <engine:VisualElement name="Window" class="window">
+            <engine:VisualElement name="header">
+                <engine:Label text="WINNER" style="font-size: 95px; -unity-font-style: bold; -unity-text-align: upper-center;" />
+            </engine:VisualElement>
+            <engine:VisualElement name="Score" class="score">
+                <engine:VisualElement name="playerNameContainer" class="scoreDetailContainer" style="width: 100%;">
+                    <LabelAutoFit text="add" ratio="1.75" axis="Horizontal" style="height: 100%; font-size: 74px;" />
+                </engine:VisualElement>
+                <engine:VisualElement name="playerImageContainer" class="scoreDetailContainer" />
+                <engine:VisualElement name="scoreContainer" class="scoreDetailContainer">
+                    <engine:Label text="Label" name="scoreText" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:VisualElement name="home">
+                <engine:Button text="Home" name="HomeButton" class="majorButton" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
