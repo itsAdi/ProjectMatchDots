@@ -151,7 +151,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 1a4584a5c8722e843847c75b4671384a, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 382de20796031954b86a859de46ee2b0, type: 3}
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
   m_WorldSpaceHeight: 1080
@@ -251,6 +251,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _uiDocument: {fileID: 1257722661}
+  _gameResultUIDocument: {fileID: 644003233}
   _gameDataSO: {fileID: 11400000, guid: 99e2d00b450b4ed4483bd8baea2c3fc6, type: 2}
   _playerAvatarsSO: {fileID: 11400000, guid: 97b7c35a0e9122044a760ad1e07097fe, type: 2}
 --- !u!4 &1836485645

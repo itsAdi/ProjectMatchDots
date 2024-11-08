@@ -1,18 +1,20 @@
-using System;
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace KemothStudios.UI
 {
     /// <summary>
-    /// Handles game UI, crrently hardcoded for 2 players only becase of how the UI is setup
+    /// Handles game UI, currently hardcoded for 2 players only because of how the UI is setup
     /// </summary>
     public class UIManagerGame : MonoBehaviour
     {
         [SerializeField] private UIDocument _uiDocument;
+        [SerializeField] private UIDocument _gameResultUIDocument;
         [SerializeField] private GameDataSO _gameDataSO;
         [SerializeField] private PlayerAvatarsSO _playerAvatarsSO;
+        [SerializeField, Min(0)] private int _gameResultUIShowDelay = 2;
 
         [SerializeField] private UIData[] _playerUI;
 
@@ -38,6 +40,9 @@ namespace KemothStudios.UI
 
             yield return new WaitUntil(() => ScoreManager.Instance != null);
             ScoreManager.Instance.ScoreUpdated += UpdateScoreText;
+
+            yield return new WaitUntil(() => GameResultManager.Instance != null);
+            GameResultManager.Instance.PlayerWon += ShowGameResultUI;
         }
 
         private void OnDestroy()
@@ -45,13 +50,24 @@ namespace KemothStudios.UI
             if (TurnHandler.Instance != null)
                 TurnHandler.Instance.TurnUpdated -= ShowTurnIndicator;
             if (ScoreManager.Instance != null)
-                ScoreManager.Instance.ScoreUpdated += UpdateScoreText;
+                ScoreManager.Instance.ScoreUpdated -= UpdateScoreText;
+            if (GameResultManager.Instance != null)
+                GameResultManager.Instance.PlayerWon -= ShowGameResultUI;
         }
 
         private void UpdateScoreText()
         {
-            if(_gameDataSO.TryGetPlayerScore(TurnHandler.Instance.CurrentPlayerIndex, out int score))
+            if (_gameDataSO.TryGetPlayerScore(TurnHandler.Instance.CurrentPlayerIndex, out int score))
                 _playerUI[TurnHandler.Instance.CurrentPlayerIndex].PlayerScore.text = score.ToString();
+        }
+
+        private async void ShowGameResultUI(int winnerPlayerIndex)
+        {
+            UIData data = _playerUI[winnerPlayerIndex];
+            data.HideTurnIndicator();
+            _playerUI[winnerPlayerIndex] = data;
+            await Task.Delay(_gameResultUIShowDelay * 1000);
+            _gameResultUIDocument.rootVisualElement.Q<VisualElement>("gameResultUI").AddToClassList("showGameResultUI");
         }
 
         private void ShowTurnIndicator()
