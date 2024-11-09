@@ -45,3 +45,17 @@
     transition-duration: 0.3s;
     transition-timing-function: linear;
 }
+
+.gameResultWindow {
+    translate: 0 150px;
+    opacity: 0;
+}
+
+.showGameResultWindow {
+    translate: 0;
+    opacity: 1;
+    transition-property: translate, opacity;
+    transition-duration: 0.3s, 0.3s;
+    transition-timing-function: ease, ease;
+    transition-delay: 0s, 0s;
+}

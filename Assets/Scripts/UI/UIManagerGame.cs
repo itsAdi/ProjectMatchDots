@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -17,6 +18,7 @@ namespace KemothStudios.UI
         [SerializeField, Min(0)] private int _gameResultUIShowDelay = 2;
 
         [SerializeField] private UIData[] _playerUI;
+        private VisualElement _gameResultUI;
 
         private IEnumerator Start()
         {
@@ -42,6 +44,7 @@ namespace KemothStudios.UI
             ScoreManager.Instance.ScoreUpdated += UpdateScoreText;
 
             yield return new WaitUntil(() => GameResultManager.Instance != null);
+            _gameResultUI = _gameResultUIDocument.rootVisualElement.Q<VisualElement>("gameResultUI");
             GameResultManager.Instance.PlayerWon += ShowGameResultUI;
         }
 
@@ -67,7 +70,11 @@ namespace KemothStudios.UI
             data.HideTurnIndicator();
             _playerUI[winnerPlayerIndex] = data;
             await Task.Delay(_gameResultUIShowDelay * 1000);
-            _gameResultUIDocument.rootVisualElement.Q<VisualElement>("gameResultUI").AddToClassList("showGameResultUI");
+            _gameResultUI.AddToClassList("showGameResultUI");
+            _gameResultUI.RegisterCallbackOnce<TransitionEndEvent>(_ =>
+            {
+                _gameResultUI.Q<VisualElement>("window").AddToClassList("showGameResultWindow");
+            });
         }
 
         private void ShowTurnIndicator()
