@@ -1,20 +1,26 @@
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace KemothStudios.UI
 {
     /// <summary>
-    /// Handles game UI, crrently hardcoded for 2 players only becase of how the UI is setup
+    /// Handles game UI, currently hardcoded for 2 players only because of how the UI is setup
     /// </summary>
     public class UIManagerGame : MonoBehaviour
     {
         [SerializeField] private UIDocument _uiDocument;
+        [SerializeField] private UIDocument _gameResultUIDocument;
         [SerializeField] private GameDataSO _gameDataSO;
         [SerializeField] private PlayerAvatarsSO _playerAvatarsSO;
+        [SerializeField, Min(0)] private int _gameResultUIShowDelay = 2;
 
         [SerializeField] private UIData[] _playerUI;
+        private VisualElement _gameResultUI, _gameResultUIPlayerAvatar;
+        private LabelAutoFit _gameResultUIPlayerName, _gameResultUIPlayerScore;
+        private Button _gameResultUIHomeButton;
 
         private IEnumerator Start()
         {
@@ -38,6 +44,14 @@ namespace KemothStudios.UI
 
             yield return new WaitUntil(() => ScoreManager.Instance != null);
             ScoreManager.Instance.ScoreUpdated += UpdateScoreText;
+
+            yield return new WaitUntil(() => GameResultManager.Instance != null);
+            _gameResultUI = _gameResultUIDocument.rootVisualElement.Q<VisualElement>("gameResultUI");
+            _gameResultUIPlayerName = _gameResultUI.Q<LabelAutoFit>("playerName");
+            _gameResultUIPlayerScore = _gameResultUI.Q<LabelAutoFit>("playerScore");
+            _gameResultUIPlayerAvatar = _gameResultUI.Q<VisualElement>("playerAvatar");
+            _gameResultUIHomeButton = _gameResultUI.Q<Button>("HomeButton");
+            GameResultManager.Instance.PlayerWon += ShowGameResultUI;
         }
 
         private void OnDestroy()
@@ -45,13 +59,43 @@ namespace KemothStudios.UI
             if (TurnHandler.Instance != null)
                 TurnHandler.Instance.TurnUpdated -= ShowTurnIndicator;
             if (ScoreManager.Instance != null)
-                ScoreManager.Instance.ScoreUpdated += UpdateScoreText;
+                ScoreManager.Instance.ScoreUpdated -= UpdateScoreText;
+            if (GameResultManager.Instance != null)
+                GameResultManager.Instance.PlayerWon -= ShowGameResultUI;
         }
 
         private void UpdateScoreText()
         {
-            if(_gameDataSO.TryGetPlayerScore(TurnHandler.Instance.CurrentPlayerIndex, out int score))
+            if (_gameDataSO.TryGetPlayerScore(TurnHandler.Instance.CurrentPlayerIndex, out int score))
                 _playerUI[TurnHandler.Instance.CurrentPlayerIndex].PlayerScore.text = score.ToString();
+        }
+
+        private async void ShowGameResultUI(int winnerPlayerIndex)
+        {
+            UIData data = _playerUI[TurnHandler.Instance.CurrentPlayerIndex];
+            data.HideTurnIndicator();
+            _playerUI[winnerPlayerIndex] = data;
+            await Task.Delay(_gameResultUIShowDelay * 1000);
+            _gameResultUI.AddToClassList("showGameResultUI");
+            if (_gameDataSO.TryGetPlayerName(winnerPlayerIndex, out string name))
+                _gameResultUIPlayerName.Text = name;
+            else Debug.LogError($"Could not find player name on index {winnerPlayerIndex}");
+            if (_gameDataSO.TryGetPlayerScore(winnerPlayerIndex, out int score))
+                _gameResultUIPlayerScore.Text = $"{score}";
+            else Debug.LogError($"Could not find player score on index {winnerPlayerIndex}");
+            if (_gameDataSO.TryGetPlayerAvatarIndex(winnerPlayerIndex, out int avatarIndex))
+                if (_playerAvatarsSO.TryGetAvatarAtIndex(avatarIndex, out Sprite avatar))
+                    _gameResultUIPlayerAvatar.style.backgroundImage = new StyleBackground(avatar);
+                else Debug.LogError($"Could not find player avatar for avatar index {avatarIndex}");
+            else Debug.LogError($"Could not find avatar index for player on index {winnerPlayerIndex}");
+            _gameResultUI.RegisterCallbackOnce<TransitionEndEvent>(_ =>
+            {
+                _gameResultUI.Q<VisualElement>("window").AddToClassList("showGameResultWindow");
+            });
+            _gameResultUIHomeButton.clicked += () =>
+            {
+                GameStates.Instance.CurrentState = GameStates.States.MAIN_MENU;
+            };
         }
 
         private void ShowTurnIndicator()

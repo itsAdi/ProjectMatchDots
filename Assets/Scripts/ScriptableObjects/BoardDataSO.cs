@@ -18,6 +18,7 @@ namespace KemothStudios.Board
 
         public int RowsCount => _rowsCount;
         public int ColumnsCount => _columnsCount;
+        public int TotalCellsCount => _cellsCount;
 
         public Transform BoardParent {  get; private set; }             
 
