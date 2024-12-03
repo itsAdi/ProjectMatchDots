@@ -9,6 +9,7 @@ namespace KemothStudios
         [NonSerialized] private int _playerCount;
 
         public int PlayerCount => _playerCount;
+        public System.Collections.Generic.IEnumerable<Player> Players => _players;
 
         public void InitializePlayerData(params Player[] players)
         {

@@ -14,7 +14,7 @@
                     <engine:VisualElement name="playerAvatar" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Sprites/Pic1.jpg?fileID=21300000&amp;guid=db4054a3edfa5d34fa5c551920da2fe7&amp;type=3#Pic1&quot;);" />
                 </engine:VisualElement>
                 <engine:VisualElement name="scoreContainer" class="scoreDetailContainer">
-                    <LabelAutoFit text="999" ratio="1.75" axis="Horizontal" name="playerName" style="height: 100%; font-size: 74px; -unity-text-align: upper-right; -unity-font-style: normal; justify-content: center; align-items: flex-start;" />
+                    <LabelAutoFit text="999" ratio="1.75" axis="Horizontal" name="playerScore" style="height: 100%; font-size: 74px; -unity-text-align: upper-right; -unity-font-style: normal; justify-content: center; align-items: flex-start;" />
                 </engine:VisualElement>
             </engine:VisualElement>
             <engine:VisualElement name="home">

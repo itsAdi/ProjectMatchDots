@@ -392,6 +392,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boardData: {fileID: 11400000, guid: d2d1d0d8be2a55d448e8db404535a729, type: 2}
+  _gameData: {fileID: 11400000, guid: 99e2d00b450b4ed4483bd8baea2c3fc6, type: 2}
 --- !u!4 &1607303712
 Transform:
   m_ObjectHideFlags: 0

@@ -9,6 +9,7 @@ namespace KemothStudios
     public class GameResultManager : MonoBehaviour
     {
         [SerializeField] private BoardDataSO _boardData;
+        [SerializeField] private GameDataSO _gameData;
 
         public static GameResultManager Instance { get; private set; }
 
@@ -37,7 +38,22 @@ namespace KemothStudios
         {
             IEnumerator enumerator = enumerable.GetEnumerator();
             while(enumerator.MoveNext()) _completedCellCount++;
-            if (_completedCellCount == _boardData.TotalCellsCount) PlayerWon?.Invoke(TurnHandler.Instance.CurrentPlayerIndex);
+            if (_completedCellCount == _boardData.TotalCellsCount)
+            {
+                int flagIndex = 0;
+                int flagScore = 0;
+                int currentIndex = 0;
+                foreach (Player player in _gameData.Players)
+                {
+                    if(player.Score > flagScore)
+                    {
+                        flagScore = player.Score;
+                        flagIndex = currentIndex;
+                    }
+                    currentIndex++;
+                }
+                PlayerWon?.Invoke(flagIndex);
+            }
         }
     } 
 }
