@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2f458b66349dfe40ac84d64481caec1, type: 3}
   m_Name: BoardConfig
   m_EditorClassIdentifier: 
-  _rows: 2
-  _columns: 2
+  _rows: 5
+  _columns: 5
   _cellWidth: 3
   _cellHeight: 3

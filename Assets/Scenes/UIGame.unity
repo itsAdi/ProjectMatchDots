@@ -254,6 +254,8 @@ MonoBehaviour:
   _gameResultUIDocument: {fileID: 644003233}
   _gameDataSO: {fileID: 11400000, guid: 99e2d00b450b4ed4483bd8baea2c3fc6, type: 2}
   _playerAvatarsSO: {fileID: 11400000, guid: 97b7c35a0e9122044a760ad1e07097fe, type: 2}
+  _boardDataSO: {fileID: 11400000, guid: d2d1d0d8be2a55d448e8db404535a729, type: 2}
+  _gameResultUIShowDelay: 2
 --- !u!4 &1836485645
 Transform:
   m_ObjectHideFlags: 0

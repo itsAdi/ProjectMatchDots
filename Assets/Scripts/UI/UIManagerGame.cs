@@ -1,3 +1,4 @@
+using KemothStudios.Board;
 using System;
 using System.Collections;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace KemothStudios.UI
         [SerializeField] private UIDocument _gameResultUIDocument;
         [SerializeField] private GameDataSO _gameDataSO;
         [SerializeField] private PlayerAvatarsSO _playerAvatarsSO;
+        [SerializeField] private BoardDataSO _boardDataSO;
         [SerializeField, Min(0)] private int _gameResultUIShowDelay = 2;
 
         [SerializeField] private UIData[] _playerUI;
@@ -24,11 +26,11 @@ namespace KemothStudios.UI
 
         private IEnumerator Start()
         {
+            // Setup score UI ...
             _playerUI = new[] {
                 new UIData(_uiDocument, "playerAContainer"),
                 new UIData(_uiDocument, "playerBContainer")
             };
-
             for (int i = 0; i < 2; i++)
             {
                 if (_gameDataSO.TryGetPlayerAvatarIndex(i, out int avatarIndex) && _playerAvatarsSO.TryGetAvatarAtIndex(avatarIndex, out Sprite avatar))
@@ -37,14 +39,13 @@ namespace KemothStudios.UI
                     _playerUI[i].PlayerName.text = playerName;
                 _playerUI[i].PlayerScore.text = "0";
             }
-
             yield return new WaitUntil(() => TurnHandler.Instance == null || TurnHandler.Instance.IsReady);
             _playerUI[TurnHandler.Instance.CurrentPlayerIndex].ShowTurnIndicator();
             TurnHandler.Instance.TurnUpdated += ShowTurnIndicator;
-
             yield return new WaitUntil(() => ScoreManager.Instance != null);
             ScoreManager.Instance.ScoreUpdated += UpdateScoreText;
 
+            // Setup Game Result UI ...
             yield return new WaitUntil(() => GameResultManager.Instance != null);
             _gameResultUI = _gameResultUIDocument.rootVisualElement.Q<VisualElement>("gameResultUI");
             _gameResultUIPlayerName = _gameResultUI.Q<LabelAutoFit>("playerName");
@@ -52,6 +53,17 @@ namespace KemothStudios.UI
             _gameResultUIPlayerAvatar = _gameResultUI.Q<VisualElement>("playerAvatar");
             _gameResultUIHomeButton = _gameResultUI.Q<Button>("HomeButton");
             GameResultManager.Instance.PlayerWon += ShowGameResultUI;
+
+            // Setup Cell Owner Avatars UI ...
+            VisualElement elem = _uiDocument.rootVisualElement.Q<VisualElement>("cellOwnerAvatarContainer");
+            Rect r = _boardDataSO.GetCell(0).CellTransform;
+            Vector2 min = Camera.main.WorldToViewportPoint(new Vector2(r.min.x, r.max.y));
+            r = _boardDataSO.GetCell(_boardDataSO.TotalCellsCount - 1).CellTransform;
+            Vector2 max = Camera.main.WorldToViewportPoint(new Vector2(r.max.x, r.min.y));
+            elem.style.width = Length.Percent((max.x - min.x) * 100f);
+            elem.style.height = Length.Percent((min.y - max.y) * 100f);
+            elem.style.left = Length.Percent(min.x * 100f);
+            elem.style.top = Length.Percent((1f - min.y) * 100f);
         }
 
         private void OnDestroy()
