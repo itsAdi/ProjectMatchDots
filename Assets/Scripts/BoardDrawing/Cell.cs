@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace KemothStudios.Board
 {
@@ -30,9 +31,9 @@ namespace KemothStudios.Board
             Line verticalLine = _lines[clickPoint.x > _cellTransform.center.x ? 1 : 3];
             Line horizontalLine = _lines[clickPoint.y > _cellTransform.center.y ? 0 : 2];
             Vector2 pointOnVerticalLine = new Vector2(verticalLine.LinePosition.x, clickPoint.y);
-            Vector2 pointOnHoriontalLine = new Vector2(clickPoint.x, horizontalLine.LinePosition.y);
+            Vector2 pointOnHorizontalLine = new Vector2(clickPoint.x, horizontalLine.LinePosition.y);
 
-            if ((pointOnVerticalLine - clickPoint).sqrMagnitude > (pointOnHoriontalLine - clickPoint).sqrMagnitude)
+            if ((pointOnVerticalLine - clickPoint).sqrMagnitude > (pointOnHorizontalLine - clickPoint).sqrMagnitude)
                 horizontalLine.LineClicked();
             else verticalLine.LineClicked();
         }
@@ -57,18 +58,18 @@ namespace KemothStudios.Board
             // BOTTOM LINE
             _lines[2] = new Line(CellTransform.center + Vector2.down * (CellTransform.height * 0.5f), new Vector3(CellTransform.width, 0.1f, 0.1f), this);
 
-            // LEFT LINE, if we got a cell on our left then get righ line from that cell and add ourselves as shared cell else simply add new left line
+            // LEFT LINE, if we got a cell on our left then get right line from that cell and add ourselves as shared cell else simply add new left line
             if (_boardData.TryGetCellIndex(_cellTransform.center + Vector2.left * _boardData.CellWidth, out int leftCellIndex))
             {
                 Cell cell = _boardData.GetCell(leftCellIndex);
-                _lines[3] = cell.GetLineRigth;
+                _lines[3] = cell.GetLineRight;
                 _lines[3].AddSharedCell(this);
             }
             else
                 _lines[3] = new Line(CellTransform.center + Vector2.left * (CellTransform.width * 0.5f), new Vector3(0.1f, CellTransform.height, 0.1f), this);
         }
 
-        public Line GetLineRigth => _lines[1];
+        public Line GetLineRight => _lines[1];
         public Line GetLineBottom => _lines[2];
 
         public bool IsCellCompleted

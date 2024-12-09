@@ -1,6 +1,7 @@
 using KemothStudios.Board;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -18,11 +19,12 @@ namespace KemothStudios.UI
         [SerializeField] private PlayerAvatarsSO _playerAvatarsSO;
         [SerializeField] private BoardDataSO _boardDataSO;
         [SerializeField, Min(0)] private int _gameResultUIShowDelay = 2;
-
         [SerializeField] private UIData[] _playerUI;
+
         private VisualElement _gameResultUI, _gameResultUIPlayerAvatar;
         private LabelAutoFit _gameResultUIPlayerName, _gameResultUIPlayerScore;
         private Button _gameResultUIHomeButton;
+        private VisualElement[] _cellIcons;
 
         private IEnumerator Start()
         {
@@ -64,6 +66,21 @@ namespace KemothStudios.UI
             elem.style.height = Length.Percent((min.y - max.y) * 100f);
             elem.style.left = Length.Percent(min.x * 100f);
             elem.style.top = Length.Percent((1f - min.y) * 100f);
+            float cellWidth = 100f / _boardDataSO.ColumnsCount;
+            float cellHeight = 100f / _boardDataSO.RowsCount;
+            _cellIcons = new VisualElement[_boardDataSO.TotalCellsCount];
+            for (int i = 0; i < _boardDataSO.TotalCellsCount; i++)
+            {
+                VisualElement avatar = new VisualElement();
+                avatar.style.backgroundColor = Color.white;
+                avatar.style.width = Length.Percent(cellWidth);
+                avatar.style.height = Length.Percent(cellHeight);
+                avatar.style.visibility = Visibility.Hidden;
+                elem.Add(avatar);
+                _cellIcons[i] = avatar;
+            }
+
+            GameManager.Instance.OnCellCompleted += AddCellOwnerIcon;
         }
 
         private void OnDestroy()
@@ -74,6 +91,23 @@ namespace KemothStudios.UI
                 ScoreManager.Instance.ScoreUpdated -= UpdateScoreText;
             if (GameResultManager.Instance != null)
                 GameResultManager.Instance.PlayerWon -= ShowGameResultUI;
+            GameManager.Instance.OnCellCompleted -= AddCellOwnerIcon;
+        }
+
+        private void AddCellOwnerIcon(IEnumerable<Cell> enumerable)
+        {
+            foreach (Cell cell in enumerable)
+            {
+                if (_boardDataSO.TryGetCellIndex(cell, out var index))
+                {
+                    if (_playerAvatarsSO.TryGetAvatarAtIndex(TurnHandler.Instance.CurrentPlayerIndex, out Sprite avatar))
+                    {
+                        _cellIcons[index].style.backgroundImage = new StyleBackground(avatar);
+                        _cellIcons[index].style.visibility = Visibility.Visible;
+                    }else Debug.LogError($"Could not get player avatar for player on index {TurnHandler.Instance.CurrentPlayerIndex}");
+                }
+                else Debug.LogError("Could not get cell index to add player avatar");
+            }
         }
 
         private void UpdateScoreText()
@@ -135,9 +169,9 @@ namespace KemothStudios.UI
             // to unregister it because reference will be different
             EventCallback<TransitionEndEvent> _callback;
 
-            public UIData(UIDocument iuDocment, string containerName)
+            public UIData(UIDocument iuDocument, string containerName)
             {
-                VisualElement container = iuDocment.rootVisualElement.Q<VisualElement>(containerName);
+                VisualElement container = iuDocument.rootVisualElement.Q<VisualElement>(containerName);
                 PlayerAvatar = container.Q<VisualElement>("playerAvatar");
                 PlayerName = container.Q<Label>("playerName");
                 PlayerScore = container.Q<Label>("playerScore");

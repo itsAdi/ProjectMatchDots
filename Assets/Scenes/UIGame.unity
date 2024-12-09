@@ -256,6 +256,7 @@ MonoBehaviour:
   _playerAvatarsSO: {fileID: 11400000, guid: 97b7c35a0e9122044a760ad1e07097fe, type: 2}
   _boardDataSO: {fileID: 11400000, guid: d2d1d0d8be2a55d448e8db404535a729, type: 2}
   _gameResultUIShowDelay: 2
+  _cellOwnerIconAsset: {fileID: 9197481963319205126, guid: d80c51181f067504a9c4663061a9aa5c, type: 3}
 --- !u!4 &1836485645
 Transform:
   m_ObjectHideFlags: 0
