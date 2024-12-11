@@ -9,10 +9,6 @@ namespace KemothStudios.Board
         [SerializeField] private BoardDataSO _boardData;
         [SerializeField, RequireInterface(typeof(IBoardGraphic))] private Object[] _boardGraphicDrawer;
 
-        private Cell[] _cells;
-        private int _cellsCount;
-        private Cell _lastCell;
-
         private void Start()
         {
             _boardData.GenerateBoardData(_boardConfig.rows, _boardConfig.columns, _boardConfig.cellWidth, _boardConfig.cellHeight, transform);
