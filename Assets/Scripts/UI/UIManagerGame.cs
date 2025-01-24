@@ -1,6 +1,9 @@
 using System;
+using KemothStudios.Board;
 using System.Collections;
 using System.Threading.Tasks;
+using KemothStudios.Utility;
+using KemothStudios.Utility.Events;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -15,20 +18,30 @@ namespace KemothStudios.UI
         [SerializeField] private UIDocument _gameResultUIDocument;
         [SerializeField] private GameDataSO _gameDataSO;
         [SerializeField] private PlayerAvatarsSO _playerAvatarsSO;
+        [SerializeField] private BoardDataSO _boardDataSO;
         [SerializeField, Min(0)] private int _gameResultUIShowDelay = 2;
 
-        [SerializeField] private UIData[] _playerUI;
+        private UIData[] _playerUI;
         private VisualElement _gameResultUI, _gameResultUIPlayerAvatar;
         private LabelAutoFit _gameResultUIPlayerName, _gameResultUIPlayerScore;
         private Button _gameResultUIHomeButton;
+        private VisualElement[] _cellIcons;
+        private EventBinding<CellAcquiredEvent> _cellCompleted;
+        private EventBinding<ScoreUpdatedEvent> _scoreUpdated;
+        private EventBinding<PlayerWonEvent> _playerWon;
+        private EventBinding<ShowVictoryEvent> _showVictory;
+        private EventBinding<TurnStartedEvent> _turnStarted;
+        private EventBinding<TurnEndedEvent> _turnEnded;
+        private Player _currentPlayer;
 
         private IEnumerator Start()
         {
-            _playerUI = new[] {
+            // Setup score UI ...
+            _playerUI = new[]
+            {
                 new UIData(_uiDocument, "playerAContainer"),
                 new UIData(_uiDocument, "playerBContainer")
             };
-
             for (int i = 0; i < 2; i++)
             {
                 if (_gameDataSO.TryGetPlayerAvatarIndex(i, out int avatarIndex) && _playerAvatarsSO.TryGetAvatarAtIndex(avatarIndex, out Sprite avatar))
@@ -38,74 +51,138 @@ namespace KemothStudios.UI
                 _playerUI[i].PlayerScore.text = "0";
             }
 
-            yield return new WaitUntil(() => TurnHandler.Instance == null || TurnHandler.Instance.IsReady);
-            _playerUI[TurnHandler.Instance.CurrentPlayerIndex].ShowTurnIndicator();
-            TurnHandler.Instance.TurnUpdated += ShowTurnIndicator;
+            _playerWon = new EventBinding<PlayerWonEvent>(StartVictorySequence);
+            EventBus<PlayerWonEvent>.RegisterBinding(_playerWon);
 
-            yield return new WaitUntil(() => ScoreManager.Instance != null);
-            ScoreManager.Instance.ScoreUpdated += UpdateScoreText;
+            _scoreUpdated = new EventBinding<ScoreUpdatedEvent>(UpdateScoreText);
+            EventBus<ScoreUpdatedEvent>.RegisterBinding(_scoreUpdated);
 
+            _showVictory = new EventBinding<ShowVictoryEvent>(ShowVictoryScreen);
+            EventBus<ShowVictoryEvent>.RegisterBinding(_showVictory);
+
+            _turnStarted = new EventBinding<TurnStartedEvent>(ShowTurnIndicator);
+            _turnStarted.AddEvent(SetCurrentPlayer);
+            EventBus<TurnStartedEvent>.RegisterBinding(_turnStarted);
+
+            _turnEnded = new EventBinding<TurnEndedEvent>(HideTurnIndicator);
+            EventBus<TurnEndedEvent>.RegisterBinding(_turnEnded);
+
+            // Setup Game Result UI ...
             yield return new WaitUntil(() => GameResultManager.Instance != null);
             _gameResultUI = _gameResultUIDocument.rootVisualElement.Q<VisualElement>("gameResultUI");
             _gameResultUIPlayerName = _gameResultUI.Q<LabelAutoFit>("playerName");
             _gameResultUIPlayerScore = _gameResultUI.Q<LabelAutoFit>("playerScore");
             _gameResultUIPlayerAvatar = _gameResultUI.Q<VisualElement>("playerAvatar");
             _gameResultUIHomeButton = _gameResultUI.Q<Button>("HomeButton");
-            GameResultManager.Instance.PlayerWon += ShowGameResultUI;
+
+            // Setup Cell Owner Avatars UI ...
+            VisualElement elem = _uiDocument.rootVisualElement.Q<VisualElement>("cellOwnerAvatarContainer");
+            Rect r = _boardDataSO.GetCell(0).CellTransform;
+            Vector2 min = Camera.main.WorldToViewportPoint(new Vector2(r.min.x, r.max.y));
+            r = _boardDataSO.GetCell(_boardDataSO.TotalCellsCount - 1).CellTransform;
+            Vector2 max = Camera.main.WorldToViewportPoint(new Vector2(r.max.x, r.min.y));
+            elem.style.width = Length.Percent((max.x - min.x) * 100f);
+            elem.style.height = Length.Percent((min.y - max.y) * 100f);
+            elem.style.left = Length.Percent(min.x * 100f);
+            elem.style.top = Length.Percent((1f - min.y) * 100f);
+            float cellWidth = 100f / _boardDataSO.ColumnsCount;
+            float cellHeight = 100f / _boardDataSO.RowsCount;
+            _cellIcons = new VisualElement[_boardDataSO.TotalCellsCount];
+            for (int i = 0; i < _boardDataSO.TotalCellsCount; i++)
+            {
+                VisualElement avatar = new VisualElement();
+                avatar.style.backgroundColor = Color.white;
+                avatar.style.width = Length.Percent(cellWidth);
+                avatar.style.height = Length.Percent(cellHeight);
+                avatar.style.visibility = Visibility.Hidden;
+                elem.Add(avatar);
+                _cellIcons[i] = avatar;
+            }
+
+            _cellCompleted = new EventBinding<CellAcquiredEvent>(AddCellOwnerIcon);
+            EventBus<CellAcquiredEvent>.RegisterBinding(_cellCompleted);
         }
 
         private void OnDestroy()
         {
-            if (TurnHandler.Instance != null)
-                TurnHandler.Instance.TurnUpdated -= ShowTurnIndicator;
-            if (ScoreManager.Instance != null)
-                ScoreManager.Instance.ScoreUpdated -= UpdateScoreText;
-            if (GameResultManager.Instance != null)
-                GameResultManager.Instance.PlayerWon -= ShowGameResultUI;
+            EventBus<ScoreUpdatedEvent>.UnregisterBinding(_scoreUpdated);
+            EventBus<PlayerWonEvent>.UnregisterBinding(_playerWon);
+            EventBus<CellAcquiredEvent>.UnregisterBinding(_cellCompleted);
+            EventBus<ShowVictoryEvent>.UnregisterBinding(_showVictory);
+            EventBus<TurnStartedEvent>.UnregisterBinding(_turnStarted);
+            EventBus<TurnEndedEvent>.UnregisterBinding(_turnEnded);
+        }
+
+        private void SetCurrentPlayer(TurnStartedEvent turnData) => _currentPlayer = turnData.Player;
+        
+        private void AddCellOwnerIcon(CellAcquiredEvent cellData)
+        {
+            if (_boardDataSO.TryGetCellIndex(cellData.Cell, out var cellIndex))
+            {
+                if (_playerAvatarsSO.TryGetAvatarAtIndex(_currentPlayer.AvatarIndex, out Sprite avatar))
+                {
+                    _cellIcons[cellIndex].style.backgroundImage = new StyleBackground(avatar);
+                    _cellIcons[cellIndex].style.visibility = Visibility.Visible;
+                }
+                else
+                    DebugUtility.LogError($"<color=red>Could not get avatar on avatar index {_currentPlayer.AvatarIndex} for player {_currentPlayer.Name}</color>");
+            }
+            else DebugUtility.LogError("<color=red>Could not get cell index to add player avatar</color>");
         }
 
         private void UpdateScoreText()
         {
-            if (_gameDataSO.TryGetPlayerScore(TurnHandler.Instance.CurrentPlayerIndex, out int score))
-                _playerUI[TurnHandler.Instance.CurrentPlayerIndex].PlayerScore.text = score.ToString();
+            if (_gameDataSO.TryGetPlayerScore(_currentPlayer.PlayerIndex, out int score))
+                _playerUI[_currentPlayer.PlayerIndex].PlayerScore.text = score.ToString();
         }
 
-        private async void ShowGameResultUI(int winnerPlayerIndex)
+        /// <summary>
+        /// Stops turn indicator and after a delay shows victory screen
+        /// </summary>
+        private async void StartVictorySequence(PlayerWonEvent winnerData)
         {
-            UIData data = _playerUI[TurnHandler.Instance.CurrentPlayerIndex];
-            data.HideTurnIndicator();
-            _playerUI[winnerPlayerIndex] = data;
-            await Task.Delay(_gameResultUIShowDelay * 1000);
-            _gameResultUI.AddToClassList("showGameResultUI");
-            if (_gameDataSO.TryGetPlayerName(winnerPlayerIndex, out string name))
-                _gameResultUIPlayerName.Text = name;
-            else Debug.LogError($"Could not find player name on index {winnerPlayerIndex}");
-            if (_gameDataSO.TryGetPlayerScore(winnerPlayerIndex, out int score))
-                _gameResultUIPlayerScore.Text = $"{score}";
-            else Debug.LogError($"Could not find player score on index {winnerPlayerIndex}");
-            if (_gameDataSO.TryGetPlayerAvatarIndex(winnerPlayerIndex, out int avatarIndex))
-                if (_playerAvatarsSO.TryGetAvatarAtIndex(avatarIndex, out Sprite avatar))
-                    _gameResultUIPlayerAvatar.style.backgroundImage = new StyleBackground(avatar);
-                else Debug.LogError($"Could not find player avatar for avatar index {avatarIndex}");
-            else Debug.LogError($"Could not find avatar index for player on index {winnerPlayerIndex}");
-            _gameResultUI.RegisterCallbackOnce<TransitionEndEvent>(_ =>
+            try
             {
-                _gameResultUI.Q<VisualElement>("window").AddToClassList("showGameResultWindow");
-            });
+                await Task.Delay(_gameResultUIShowDelay * 1000);
+                EventBus<ShowVictoryEvent>.RaiseEvent(new ShowVictoryEvent(winnerData.WinnerPlayer));
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                throw;
+            }
+        }
+
+        private void ShowVictoryScreen(ShowVictoryEvent victoryEvent)
+        {
+            _gameResultUI.AddToClassList("showGameResultUI");
+            _gameResultUIPlayerName.Text = victoryEvent.Player.Name;
+            _gameResultUIPlayerScore.Text = $"{victoryEvent.Player.GetScore}";
+            if (_playerAvatarsSO.TryGetAvatarAtIndex(victoryEvent.Player.AvatarIndex, out Sprite avatar))
+                _gameResultUIPlayerAvatar.style.backgroundImage = new StyleBackground(avatar);
+            else DebugUtility.LogError($"Could not find player avatar for avatar index {victoryEvent.Player.AvatarIndex}");
+            _gameResultUI.RegisterCallbackOnce<TransitionEndEvent>(_ => { _gameResultUI.Q<VisualElement>("window").AddToClassList("showGameResultWindow"); });
             _gameResultUIHomeButton.clicked += () =>
             {
+                EventBus<MajorButtonClickedEvent>.RaiseEvent(new MajorButtonClickedEvent());
                 GameStates.Instance.CurrentState = GameStates.States.MAIN_MENU;
             };
         }
 
-        private void ShowTurnIndicator()
+        private void ShowTurnIndicator(TurnStartedEvent turnData)
         {
-            UIData data = _playerUI[TurnHandler.Instance.LastPlayerIndex];
-            data.HideTurnIndicator();
-            _playerUI[TurnHandler.Instance.LastPlayerIndex] = data;
-            data = _playerUI[TurnHandler.Instance.CurrentPlayerIndex];
+            int playerIndex = turnData.Player.PlayerIndex;
+            UIData data = _playerUI[playerIndex];
             data.ShowTurnIndicator();
-            _playerUI[TurnHandler.Instance.CurrentPlayerIndex] = data;
+            _playerUI[playerIndex] = data;
+        }
+
+        private void HideTurnIndicator(TurnEndedEvent turnData)
+        {
+            int playerIndex = turnData.Player.PlayerIndex;
+            UIData data = _playerUI[playerIndex];
+            data.HideTurnIndicator();
+            _playerUI[playerIndex] = data;
         }
 
         // Struct to handle each player details panel
@@ -123,9 +200,9 @@ namespace KemothStudios.UI
             // to unregister it because reference will be different
             EventCallback<TransitionEndEvent> _callback;
 
-            public UIData(UIDocument iuDocment, string containerName)
+            public UIData(UIDocument iuDocument, string containerName)
             {
-                VisualElement container = iuDocment.rootVisualElement.Q<VisualElement>(containerName);
+                VisualElement container = iuDocument.rootVisualElement.Q<VisualElement>(containerName);
                 PlayerAvatar = container.Q<VisualElement>("playerAvatar");
                 PlayerName = container.Q<Label>("playerName");
                 PlayerScore = container.Q<Label>("playerScore");

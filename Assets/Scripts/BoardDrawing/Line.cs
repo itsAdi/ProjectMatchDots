@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using KemothStudios.Utility.Events;
 using UnityEngine;
 
 namespace KemothStudios.Board
@@ -8,6 +9,7 @@ namespace KemothStudios.Board
         private Cell[] _sharedByCells;
         private Vector2 _linePosition;
         private Vector2 _lineScale;
+        
         public bool Clicked{get; private set; }
 
         public Vector2 LinePosition => _linePosition;
@@ -32,7 +34,7 @@ namespace KemothStudios.Board
             if (!Clicked)
             {
                 Clicked = true;
-                GameManager.Instance.OnLineClicked(this);
+                EventBus<DrawLineEvent>.RaiseEvent(new DrawLineEvent(this));
             }
         }
 

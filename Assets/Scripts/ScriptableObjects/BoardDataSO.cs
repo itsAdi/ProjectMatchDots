@@ -19,6 +19,7 @@ namespace KemothStudios.Board
         public int RowsCount => _rowsCount;
         public int ColumnsCount => _columnsCount;
         public int TotalCellsCount => _cellsCount;
+        public int CompletedCellsCount { get; set; }
 
         public Transform BoardParent {  get; private set; }             
 
@@ -33,6 +34,7 @@ namespace KemothStudios.Board
             _boardWidth = cellWidth * columns;
             _boardHeight = cellHeight * rows;
             BoardParent = boardParent;
+            CompletedCellsCount = 0;
             InitializeLinesCollection();
             CreateCells();
         }
@@ -52,6 +54,7 @@ namespace KemothStudios.Board
             _cells = null;
             _lines = null;
 
+            CompletedCellsCount = 0;
             BoardParent = null;
         }
 
@@ -69,6 +72,26 @@ namespace KemothStudios.Board
                 return true;
             }
             return false;
+        }
+
+        public bool TryGetCellIndex(Cell cell, out int index)
+        {
+            index = -1;
+            if (cell == null)
+            {
+                Debug.LogError("Could not pass a null cell to get its index");
+                return false;
+            }
+            int flaggedIndex = -1;
+            foreach (Cell c in _cells)
+            {
+                    flaggedIndex++;
+                if(c == cell)
+                {
+                    index = flaggedIndex; break;
+                }
+            }
+            return index >= 0;
         }
 
         public Cell GetCell(int index) => _cells[index];
@@ -93,7 +116,7 @@ namespace KemothStudios.Board
                 float posY = initialPosition.y - (CellHeight * indexY);
                 _cells[i] = new Cell(new Vector3(posX, posY, initialPosition.z), cellScale, this);
                 indexX++;
-                if (indexX == RowsCount)
+                if (indexX == ColumnsCount)
                 {
                     indexX = 0;
                     indexY++;
@@ -104,9 +127,9 @@ namespace KemothStudios.Board
         private void InitializeLinesCollection()
         {
             int firstCell = 4; // because first cell will create all four lines around it
-            int remainingFirstCellsOfColumns = (ColumnsCount - 1) * 3; // because every first cell in each column will create 3 news lines and sharing right most line of their neigbouring cell
+            int remainingFirstCellsOfColumns = (ColumnsCount - 1) * 3; // because every first cell in each column will create 3 news lines and sharing right most line of their neighboring cell
             int remainingFirstCellOfRows = (RowsCount - 1) * 3; // because every first cell in each row will create 3 new lines and sharing bottom line from the cell above them
-            int remainingCells = (ColumnsCount - 1) * (RowsCount - 1) * 2;// because remainig cells will create 2 new lines and sharing one line from the cell on ther right and one line from the cell above them
+            int remainingCells = (ColumnsCount - 1) * (RowsCount - 1) * 2;// because remainig cells will create 2 new lines and sharing one line from the cell on their right and one line from the cell above them
             _lines = new Line[firstCell + remainingFirstCellsOfColumns + remainingFirstCellOfRows + remainingCells];
         }
     }

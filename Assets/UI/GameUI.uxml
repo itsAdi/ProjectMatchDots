@@ -22,4 +22,7 @@
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:VisualElement name="cellOwnerAvatars" style="flex-grow: 1; position: absolute; width: 100%; height: 100%;">
+        <ui:VisualElement name="cellOwnerAvatarContainer" style="flex-direction: row; flex-wrap: wrap;" />
+    </ui:VisualElement>
 </ui:UXML>

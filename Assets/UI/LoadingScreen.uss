@@ -1,0 +1,9 @@
+.bg {
+    background-color: rgb(0, 0, 0);
+}
+
+.hide {
+    transition-duration: 2s;
+    transition-property: opacity;
+    opacity: 0;
+}
