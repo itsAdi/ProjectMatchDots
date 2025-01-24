@@ -1,6 +1,7 @@
 using KemothStudios.Board;
-using System;
 using System.Collections.Generic;
+using KemothStudios.Utility;
+using KemothStudios.Utility.Events;
 using UnityEngine;
 
 namespace KemothStudios
@@ -9,40 +10,34 @@ namespace KemothStudios
     {
         [SerializeField] private GameDataSO _gameData;
 
-        public static ScoreManager Instance;
-
-        public Action ScoreUpdated;
-
-        private void Awake()
-        {
-            if(Instance == null)
-                Instance = this;
-            else if (Instance != this)
-                Destroy(gameObject);
-        }
+        private EventBinding<CellsAcquireStartedEvent> _cellAcquireStarted;
+        private EventBinding<TurnStartedEvent> _turnStarted;
+        private Player _currentPlayer;
 
         private void Start()
         {
-            GameManager.Instance.OnCellCompleted += UpdateScore;
+            _cellAcquireStarted = new EventBinding<CellsAcquireStartedEvent>(UpdateScore);
+            EventBus<CellsAcquireStartedEvent>.RegisterBinding(_cellAcquireStarted);
+            _turnStarted = new EventBinding<TurnStartedEvent>(SetCurrentPlayer);
+            EventBus<TurnStartedEvent>.RegisterBinding(_turnStarted);
         }
 
         private void OnDestroy()
         {
-            ScoreUpdated = null;
-            if (GameManager.Instance != null)
-                GameManager.Instance.OnCellCompleted -= UpdateScore;
-            if(Instance == this)
-                Instance = null;
+            EventBus<CellsAcquireStartedEvent>.UnregisterBinding(_cellAcquireStarted);
+            EventBus<TurnStartedEvent>.UnregisterBinding(_turnStarted);
         }
 
-        private void UpdateScore(IEnumerable<Cell> enumerable)
+        private void SetCurrentPlayer(TurnStartedEvent turnData) => _currentPlayer = turnData.Player;
+
+        private void UpdateScore(CellsAcquireStartedEvent lineData)
         {
-            if (_gameData.TryGetPlayerScore(TurnHandler.Instance.CurrentPlayerIndex, out int score))
-            {
-                foreach (Cell cell in enumerable) score++;
-                _gameData.TrySetPlayerScore(TurnHandler.Instance.CurrentPlayerIndex, score);
-                ScoreUpdated?.Invoke();
-            }
+            using IEnumerator<Cell> dataEnum = lineData.Cells.GetEnumerator();
+            int score = _currentPlayer.GetScore;
+            while (dataEnum.MoveNext()) score++;
+            if(!_gameData.TrySetPlayerScore(_currentPlayer.PlayerIndex, score))
+                DebugUtility.LogError($"Failed to set player score for player on index {_currentPlayer.PlayerIndex}");
+            EventBus<ScoreUpdatedEvent>.RaiseEvent(new ScoreUpdatedEvent());
         }
     }
 }

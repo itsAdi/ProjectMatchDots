@@ -5,10 +5,13 @@ namespace KemothStudios.Board
     public class BoardFitToScreen : MonoBehaviour
     {
         [SerializeField] private BoardConfigSO _boardConfig;
-        [SerializeField] private Camera _camera;
+        
+        private Camera _camera;
 
         private void Start()
         {
+            _camera = Camera.main;
+            
             float boardWidth = _boardConfig.cellWidth * _boardConfig.columns + 5f;
             float boardHeight = _boardConfig.cellHeight * _boardConfig.rows + 5f;
             float screenRatio = (float)Screen.width / Screen.height;

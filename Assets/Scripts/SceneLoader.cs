@@ -1,54 +1,92 @@
+using System;
 using KemothStudios.Utility;
 using System.Threading.Tasks;
+using KemothStudios.Utility.Events;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 namespace KemothStudios
 {
     public class SceneLoader : MonoBehaviour
     {
-        [SerializeField] SerializableDictionary<GameStates.States, SceneField[]> _scenes;
+        [SerializeField] SerializableDictionary<GameStates.States, SceneField[]> scenes;
+        [SerializeField] private UIDocument loadingScreen;
 
-        private GameStates.States _loadedScenes;
+        private GameStates.States _scenesToLoad, _scenesToUnload;
+        private VisualElement _loadingScreenVisualElement;
+
+        // Used for the case where this is the first time we are loading the game and loading screen is already visible...
+        private bool _firstLoadDone;
+
+        private void Awake()
+        {
+            _loadingScreenVisualElement = loadingScreen.rootVisualElement.Q("background");
+        }
 
         private void Start()
         {
-            GameStates.Instance.GameStateChanged += ChangeScene;
-            if(GameStates.Instance.CurrentState != GameStates.States.NONE)
-                ChangeScene(GameStates.Instance.CurrentState);
+            GameStates.Instance.GameStateChanged += StartChangeScene;
+            if (GameStates.Instance.CurrentState != GameStates.States.NONE)
+                StartChangeScene(GameStates.Instance.CurrentState);
         }
 
-        private async void ChangeScene(GameStates.States currentState)
+        private async void StartChangeScene(GameStates.States currentState)
         {
-            if (_loadedScenes is not GameStates.States.NONE)
+            _scenesToLoad = currentState;
+            _loadingScreenVisualElement.pickingMode = PickingMode.Position;
+            if (_firstLoadDone)
             {
-                await UnloadScenes();
+                bool loadingScreenTransitionCompleted = false;
+                _loadingScreenVisualElement.RegisterCallbackOnce<TransitionEndEvent>(_ => loadingScreenTransitionCompleted = true);
+                _loadingScreenVisualElement.RemoveFromClassList("hide");
+                while (!loadingScreenTransitionCompleted)
+                {
+                    await Task.Yield();
+                }
+            }
+            else
+            {
+                _firstLoadDone = true;
             }
 
-            LoadScenes(currentState);
+            await UnloadScenes();
+            await LoadScenes();
+
+            _loadingScreenVisualElement.RegisterCallbackOnce<TransitionEndEvent>(_ =>
+            {
+                _loadingScreenVisualElement.pickingMode = PickingMode.Ignore;
+                EventBus<SceneLoadingCompleteEvent>.RaiseEvent(new SceneLoadingCompleteEvent());
+            });
+            _loadingScreenVisualElement.AddToClassList("hide");
         }
 
-        private async void LoadScenes(GameStates.States scene)
+        private async Task LoadScenes()
         {
-            _loadedScenes = scene;
-            if (_scenes.TryGetValue(scene, out SceneField[] scenes))
+            if (_scenesToLoad is GameStates.States.NONE) return;
+            if (scenes.TryGetValue(_scenesToLoad, out SceneField[] scenesToLoad))
             {
-                foreach (SceneField sceneName in scenes)
+                foreach (SceneField sceneName in scenesToLoad)
                 {
                     AsyncOperation op = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
                     while (!op.isDone) await Task.Yield();
                 }
             }
+
+            _scenesToUnload = _scenesToLoad;
+            _scenesToLoad = GameStates.States.NONE;
         }
 
         private async Task UnloadScenes()
         {
-            foreach (SceneField scenes in _scenes[_loadedScenes])
+            if (_scenesToUnload is GameStates.States.NONE) return;
+            foreach (SceneField scenes in scenes[_scenesToUnload])
             {
                 AsyncOperation op = SceneManager.UnloadSceneAsync(scenes);
                 while (!op.isDone) await Task.Yield();
             }
-            _loadedScenes = GameStates.States.NONE;
+
+            _scenesToUnload = GameStates.States.NONE;
         }
     }
 }

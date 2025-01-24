@@ -1,4 +1,6 @@
 using System;
+using KemothStudios.Utility;
+using KemothStudios.Utility.Events;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -17,8 +19,8 @@ namespace KemothStudios
         private Button _startGameButton;
         private RadioButton[] _playerAvatarControls;
         private RadioButton _playerAAvatarTab, _playerBAvatarTab;
-        private int[] _playerAvatarIndices = new int[] { 0, 1 }; // Indices of the selected playar avatar
-        private int _enabledPlayareAvatarTab; // actually the index to use in _playerAvatarIndices
+        private int[] _playerAvatarIndices = new int[] { 0, 1 }; // Indices of the selected player avatar
+        private int _enabledPlayerAvatarTab; // actually the index to use in _playerAvatarIndices
         private bool _updatingAvatarsView;
 
         private void Start()
@@ -35,16 +37,18 @@ namespace KemothStudios
             {
                 if (x.newValue)
                 {
-                    _enabledPlayareAvatarTab = 0;
+                    _enabledPlayerAvatarTab = 0;
                     UpdateAvatarsView();
+                    EventBus<MinorButtonClickedEvent>.RaiseEvent(new MinorButtonClickedEvent());
                 }
             });
             _playerBAvatarTab.RegisterValueChangedCallback(x =>
             {
                 if (x.newValue)
                 {
-                    _enabledPlayareAvatarTab = 1;
+                    _enabledPlayerAvatarTab = 1;
                     UpdateAvatarsView();
+                    EventBus<MinorButtonClickedEvent>.RaiseEvent(new MinorButtonClickedEvent());
                 }
             });
 
@@ -66,7 +70,11 @@ namespace KemothStudios
                         if (x.newValue)
                         {
                             if (!_updatingAvatarsView)
-                                _playerAvatarIndices[_enabledPlayareAvatarTab] = index;
+                            {
+                                _playerAvatarIndices[_enabledPlayerAvatarTab] = index;
+                                EventBus<AvatarClickedEvent>.RaiseEvent(new AvatarClickedEvent());
+                            }
+
                             _updatingAvatarsView = false;
                         }
                     });
@@ -89,33 +97,33 @@ namespace KemothStudios
             if (_playerAvatarControls != null)
             {
                 _updatingAvatarsView = true;
-                int index = _playerAvatarIndices[_enabledPlayareAvatarTab];
+                int index = _playerAvatarIndices[_enabledPlayerAvatarTab];
                 _playerAvatarControls[index].SetEnabled(true);
                 _playerAvatarControls[index].value = true;
                 foreach (int iteratedIndex in _playerAvatarIndices)
                 {
-                    if(iteratedIndex != index) _playerAvatarControls[iteratedIndex].SetEnabled(false);
+                    if (iteratedIndex != index) _playerAvatarControls[iteratedIndex].SetEnabled(false);
                 }
             }
         }
 
-        private void AssignSelectedAvatarIndex(int index, ref int avatarIndexForEnabledTab) => avatarIndexForEnabledTab = index;
-
         private void StartGame()
         {
+            EventBus<MajorButtonClickedEvent>.RaiseEvent(new MajorButtonClickedEvent());
+            
             if (string.IsNullOrEmpty(_playerAName.text) || string.IsNullOrEmpty(_playerBName.text))
             {
-                Debug.Log("<color=red>Player names are required</color>");
+                DebugUtility.LogColored("red", "Player names are required");
                 return;
             }
 
             if (_playerAName.text.Length < 3 || _playerBName.text.Length < 3)
             {
-                Debug.Log("<color=red>Player names must be atleast of 3 characters</color>");
+                DebugUtility.LogColored("red", "Player names must be at least 3 characters");
                 return;
             }
-            Player playerA = new(_playerAName.text, _playerAvatarIndices[0]);
-            Player playerB = new(_playerBName.text, _playerAvatarIndices[1]);
+            Player playerA = new(_playerAName.text, _playerAvatarIndices[0], 0, _gameData);
+            Player playerB = new(_playerBName.text, _playerAvatarIndices[1], 1, _gameData);
             _gameData.InitializePlayerData(playerA, playerB);
 
             GameStates.Instance.CurrentState = GameStates.States.GAME;

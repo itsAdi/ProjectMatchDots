@@ -67,7 +67,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boardConfig: {fileID: 11400000, guid: ab8fc292ade90524c9703e5a6c30737c, type: 2}
-  _camera: {fileID: 0}
 --- !u!114 &6684707615204403335
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121,3 +120,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcb2da827dd7c7c4dae1cdc261e1a2e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _cellCompletionDelay: 0.15
+  _boardData: {fileID: 11400000, guid: d2d1d0d8be2a55d448e8db404535a729, type: 2}

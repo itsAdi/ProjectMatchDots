@@ -2,3 +2,13 @@
     font-size: 95px;
     background-color: rgb(154, 65, 0);
 }
+
+.fitScreen {
+    flex-grow: 1;
+}
+
+.hide {
+    transition-duration: 2s;
+    transition-property: opacity;
+    opacity: 0;
+}

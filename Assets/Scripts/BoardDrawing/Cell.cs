@@ -1,4 +1,5 @@
 ﻿using System;
+using KemothStudios.Utility.Events;
 using UnityEngine;
 
 namespace KemothStudios.Board
@@ -8,7 +9,8 @@ namespace KemothStudios.Board
         private Line[] _lines;
         private Rect _cellTransform;
         private BoardDataSO _boardData;
-
+        private bool _cellCompleted;
+        
         public Rect CellTransform => _cellTransform;
         public BoardDataSO BoardData => _boardData;
 
@@ -16,7 +18,6 @@ namespace KemothStudios.Board
         {
             _boardData = boardData;
             _cellTransform = new Rect(position.x - scale.x * 0.5f, position.y - scale.y * 0.5f, scale.x, scale.y);
-            _boardData.TryGetCellIndex(_cellTransform.center, out int index);
             CreateLines();
         }
 
@@ -72,10 +73,15 @@ namespace KemothStudios.Board
         public Line GetLineRight => _lines[1];
         public Line GetLineBottom => _lines[2];
 
+        /// <summary>
+        /// Checks if cell is completed
+        /// </summary>
         public bool IsCellCompleted
         {
             get
             {
+                if(_cellCompleted)
+                    return true;
                 bool result = true;
                 foreach (Line line in _lines)
                 {
@@ -87,6 +93,16 @@ namespace KemothStudios.Board
                 }
                 return result;
             }
+        }
+
+        /// <summary>
+        /// Marks a cell completed and raises cell completed event
+        /// </summary>
+        public void MarkCellCompleted()
+        {
+            if(_cellCompleted) return;
+            _cellCompleted = true;
+            EventBus<CellAcquiredEvent>.RaiseEvent(new CellAcquiredEvent(this));
         }
     }
 }

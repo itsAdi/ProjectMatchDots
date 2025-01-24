@@ -19,6 +19,7 @@ namespace KemothStudios.Board
         public int RowsCount => _rowsCount;
         public int ColumnsCount => _columnsCount;
         public int TotalCellsCount => _cellsCount;
+        public int CompletedCellsCount { get; set; }
 
         public Transform BoardParent {  get; private set; }             
 
@@ -33,6 +34,7 @@ namespace KemothStudios.Board
             _boardWidth = cellWidth * columns;
             _boardHeight = cellHeight * rows;
             BoardParent = boardParent;
+            CompletedCellsCount = 0;
             InitializeLinesCollection();
             CreateCells();
         }
@@ -52,6 +54,7 @@ namespace KemothStudios.Board
             _cells = null;
             _lines = null;
 
+            CompletedCellsCount = 0;
             BoardParent = null;
         }
 
@@ -113,7 +116,7 @@ namespace KemothStudios.Board
                 float posY = initialPosition.y - (CellHeight * indexY);
                 _cells[i] = new Cell(new Vector3(posX, posY, initialPosition.z), cellScale, this);
                 indexX++;
-                if (indexX == RowsCount)
+                if (indexX == ColumnsCount)
                 {
                     indexX = 0;
                     indexY++;
