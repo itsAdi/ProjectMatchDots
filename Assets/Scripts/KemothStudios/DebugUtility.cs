@@ -6,9 +6,21 @@ namespace KemothStudios.Utility
     public static class DebugUtility
     {
         [Conditional("DEBUG")]
+        public static void Log(string message)
+        {
+            Debug.Log(message);
+        }
+        
+        [Conditional("DEBUG")]
         public static void LogError(string message)
         {
                 Debug.LogError(message);
+        }
+        
+        [Conditional("DEBUG")]
+        public static void LogWarning(string message)
+        {
+            Debug.LogWarning(message);
         }
 
         [Conditional("DEBUG")]

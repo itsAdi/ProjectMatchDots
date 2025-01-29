@@ -13,7 +13,7 @@ namespace KemothStudios
 
         private int _currentPlayerIndex;
         private EventBinding<CellAcquireCompletedEvent> _cellAcquireCompleted;
-        private EventBinding<SceneLoadingCompleteEvent> _sceneLoaded;
+        private EventBinding<GameStartedEvent> _gameStarted;
         private EventBinding<BoardReadyAfterDrawLineEvent> _boardReadyAfterDrawLine;
         private EventBinding<PlayerWonEvent> _playerWon;
         private bool _canChangeTurn;
@@ -26,11 +26,10 @@ namespace KemothStudios
             EventBus<CellAcquireCompletedEvent>.RegisterBinding(_cellAcquireCompleted);
             _boardReadyAfterDrawLine = new EventBinding<BoardReadyAfterDrawLineEvent>(ChangeTurn);
             EventBus<BoardReadyAfterDrawLineEvent>.RegisterBinding(_boardReadyAfterDrawLine);
-            _sceneLoaded = new EventBinding<SceneLoadingCompleteEvent>(StartGame);
-            EventBus<SceneLoadingCompleteEvent>.RegisterBinding(_sceneLoaded);
+            _gameStarted = new EventBinding<GameStartedEvent>(StartGame);
+            EventBus<GameStartedEvent>.RegisterBinding(_gameStarted);
             _playerWon = new EventBinding<PlayerWonEvent>(EndCurrentPlayerTurnOnGameOver);
             EventBus<PlayerWonEvent>.RegisterBinding(_playerWon);
-            RaiseTurnStartEvent(0);
         }
 
 
@@ -41,7 +40,7 @@ namespace KemothStudios
             _currentPlayerIndex = 0;
             EventBus<CellAcquireCompletedEvent>.UnregisterBinding(_cellAcquireCompleted);
             EventBus<BoardReadyAfterDrawLineEvent>.UnregisterBinding(_boardReadyAfterDrawLine);
-            EventBus<SceneLoadingCompleteEvent>.UnregisterBinding(_sceneLoaded);
+            EventBus<GameStartedEvent>.UnregisterBinding(_gameStarted);
             EventBus<PlayerWonEvent>.UnregisterBinding(_playerWon);
         }
 

@@ -5,6 +5,11 @@ using KemothStudios.Utility.Events;
 namespace KemothStudios
 {
     /// <summary>
+    /// Called from <b>GameManager</b> to start the game
+    /// </summary>
+    public struct GameStartedEvent : IEvent{}
+    
+    /// <summary>
     /// Called when a major button is used
     /// </summary>
     public struct MajorButtonClickedEvent : IEvent {}
