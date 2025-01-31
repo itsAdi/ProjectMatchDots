@@ -184,6 +184,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _uiDoument: {fileID: 1555261}
+  _uiSettings:
+    _settingsUIAsset: {fileID: 9197481963319205126, guid: 41eb231b3368f2bf38aa5e4a89a1d302, type: 3}
   _gameData: {fileID: 11400000, guid: 99e2d00b450b4ed4483bd8baea2c3fc6, type: 2}
   _playerAvatars: {fileID: 11400000, guid: 97b7c35a0e9122044a760ad1e07097fe, type: 2}
 --- !u!1660057539 &9223372036854775807

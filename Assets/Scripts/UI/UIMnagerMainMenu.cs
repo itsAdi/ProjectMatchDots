@@ -12,6 +12,7 @@ namespace KemothStudios
     public class UIMnagerMainMenu : MonoBehaviour
     {
         [SerializeField] private UIDocument _uiDoument;
+        [SerializeField] private UISettings _uiSettings;
         [SerializeField] private GameDataSO _gameData;
         [SerializeField] private PlayerAvatarsSO _playerAvatars;
 
@@ -22,6 +23,7 @@ namespace KemothStudios
         private int[] _playerAvatarIndices = new int[] { 0, 1 }; // Indices of the selected player avatar
         private int _enabledPlayerAvatarTab; // actually the index to use in _playerAvatarIndices
         private bool _updatingAvatarsView;
+        private VisualElement _settingsCog;
 
         private void Start()
         {
@@ -29,6 +31,8 @@ namespace KemothStudios
             _playerBName = _uiDoument.rootVisualElement.Q<TextField>("playerBName");
             _startGameButton = _uiDoument.rootVisualElement.Q<Button>("startGameButton");
 
+            _uiSettings.Initialize(_uiDoument);
+            
             // Setting up player avatar tabs
             UQueryBuilder<RadioButton> q = _uiDoument.rootVisualElement.Query<RadioButton>("playerIconTab");
             _playerAAvatarTab = q.AtIndex(0);
@@ -51,11 +55,17 @@ namespace KemothStudios
                     EventBus<MinorButtonClickedEvent>.RaiseEvent(new MinorButtonClickedEvent());
                 }
             });
+            
+            _settingsCog = _uiDoument.rootVisualElement.Q<VisualElement>("settingsCog");
+            _settingsCog.RegisterCallback<ClickEvent>(_=>_uiSettings.ShowSettings());
 
             if (_playerAvatars.GetAvatarsCount >= 2) // Checking for more than 2 because we have a 2 player setup and we need atleast 2 avatars in collection
             {
                 _playerAvatarControls = new RadioButton[_playerAvatars.GetAvatarsCount];
-                VisualElement group = _uiDoument.rootVisualElement.Query<VisualElement>("iconsGrid").Children<GroupBox>();
+
+                VisualElement grid = _uiDoument.rootVisualElement.Query<VisualElement>("iconsGrid");
+                VisualElement group = grid.Q<GroupBox>();
+                grid.Q<ScrollView>().Add(group);
                 for (int i = 0; i < _playerAvatars.GetAvatarsCount; i++)
                 {
                     RadioButton r = new();
@@ -90,6 +100,7 @@ namespace KemothStudios
         private void OnDestroy()
         {
             _startGameButton.clicked -= StartGame;
+            _settingsCog.UnregisterCallback<ClickEvent>(_=>_uiSettings.ShowSettings());
         }
 
         private void UpdateAvatarsView()
