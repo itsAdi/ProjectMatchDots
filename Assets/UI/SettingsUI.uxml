@@ -8,7 +8,7 @@
                 <engine:VisualElement name="volumeControls" style="flex-direction: row;">
                     <engine:Toggle label="Toggle" name="muteToggle" class="majorButton" style="width: 80px; height: 80px; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;" />
                     <engine:VisualElement name="volumeSlider" style="flex-grow: 1; align-items: stretch; justify-content: center;">
-                        <engine:Slider label="Slider" value="0" high-value="100" />
+                        <engine:Slider label="Slider" value="0" high-value="1" />
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
@@ -18,7 +18,7 @@
                 <engine:VisualElement name="volumeControls" style="flex-direction: row;">
                     <engine:Toggle label="Toggle" name="muteToggle" class="majorButton" style="width: 80px; height: 80px; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;" />
                     <engine:VisualElement name="volumeSlider" style="flex-grow: 1; align-items: stretch; justify-content: center;">
-                        <engine:Slider label="Slider" value="0" high-value="100" />
+                        <engine:Slider label="Slider" value="0" high-value="1" />
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>

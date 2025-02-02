@@ -12,7 +12,6 @@ namespace KemothStudios
     public class UIMnagerMainMenu : MonoBehaviour
     {
         [SerializeField] private UIDocument _uiDoument;
-        [SerializeField] private UISettings _uiSettings;
         [SerializeField] private GameDataSO _gameData;
         [SerializeField] private PlayerAvatarsSO _playerAvatars;
 
@@ -30,8 +29,6 @@ namespace KemothStudios
             _playerAName = _uiDoument.rootVisualElement.Q<TextField>("playerAName");
             _playerBName = _uiDoument.rootVisualElement.Q<TextField>("playerBName");
             _startGameButton = _uiDoument.rootVisualElement.Q<Button>("startGameButton");
-
-            _uiSettings.Initialize(_uiDoument);
             
             // Setting up player avatar tabs
             UQueryBuilder<RadioButton> q = _uiDoument.rootVisualElement.Query<RadioButton>("playerIconTab");
@@ -57,7 +54,7 @@ namespace KemothStudios
             });
             
             _settingsCog = _uiDoument.rootVisualElement.Q<VisualElement>("settingsCog");
-            _settingsCog.RegisterCallback<ClickEvent>(_=>_uiSettings.ShowSettings());
+            _settingsCog.RegisterCallback<ClickEvent>(ShowSettings);
 
             if (_playerAvatars.GetAvatarsCount >= 2) // Checking for more than 2 because we have a 2 player setup and we need atleast 2 avatars in collection
             {
@@ -100,9 +97,15 @@ namespace KemothStudios
         private void OnDestroy()
         {
             _startGameButton.clicked -= StartGame;
-            _settingsCog.UnregisterCallback<ClickEvent>(_=>_uiSettings.ShowSettings());
+            _settingsCog.UnregisterCallback<ClickEvent>(ShowSettings);
         }
 
+        private void ShowSettings(ClickEvent evt)
+        {
+            EventBus<ShowSettingsEvent>.RaiseEvent(new ShowSettingsEvent());
+            EventBus<MinorButtonClickedEvent>.RaiseEvent(new MinorButtonClickedEvent());
+        }
+        
         private void UpdateAvatarsView()
         {
             if (_playerAvatarControls != null)

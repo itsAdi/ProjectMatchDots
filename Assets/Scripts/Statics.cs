@@ -1,4 +1,5 @@
 using System;
+using UnityEngine.UIElements;
 
 namespace KemothStudios
 {
@@ -34,6 +35,20 @@ namespace KemothStudios
         {
             if(condition()) return;
             throw new NullReferenceException(message);
+        }
+        
+        public static VisualElement GetVisualElement(this VisualElement parent, string name, string failureMessage)
+        {
+            VisualElement result = parent.Q(name);
+            Assert(() => result != null, failureMessage);
+            return result;
+        }
+        
+        public static T GetVisualElement<T>(this VisualElement parent, string failureMessage) where T : VisualElement
+        {
+            T result = parent.Q<T>();
+            Assert(() => result != null, failureMessage);
+            return result;
         }
     }
 }

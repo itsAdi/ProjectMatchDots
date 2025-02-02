@@ -184,12 +184,58 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _uiDoument: {fileID: 1555261}
-  _uiSettings:
-    _settingsUIAsset: {fileID: 9197481963319205126, guid: 41eb231b3368f2bf38aa5e4a89a1d302, type: 3}
   _gameData: {fileID: 11400000, guid: 99e2d00b450b4ed4483bd8baea2c3fc6, type: 2}
   _playerAvatars: {fileID: 11400000, guid: 97b7c35a0e9122044a760ad1e07097fe, type: 2}
+--- !u!1 &1092938331
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1092938333}
+  - component: {fileID: 1092938332}
+  m_Layer: 0
+  m_Name: UISettings
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1092938332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1092938331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c4e6169e1fa2e4de8d44e12b313cf8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _settingsUIAsset: {fileID: 9197481963319205126, guid: 41eb231b3368f2bf38aa5e4a89a1d302, type: 3}
+  _uiDocumment: {fileID: 1555261}
+  _audioData: {fileID: 11400000, guid: a2889412070b27b28abe72bdf31b88cc, type: 2}
+--- !u!4 &1092938333
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1092938331}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1555262}
+  - {fileID: 1092938333}

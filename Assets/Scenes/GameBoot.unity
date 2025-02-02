@@ -242,6 +242,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gameAudio: {fileID: 213332537}
   _uiAudio: {fileID: 989159411}
+  _audioData: {fileID: 11400000, guid: a2889412070b27b28abe72bdf31b88cc, type: 2}
   _majorButtonClick: {fileID: 8300000, guid: 21c239a239c51ed0cbdd5f08aa21db7b, type: 3}
   _minorButtonClick: {fileID: 8300000, guid: 9c69a997128f8e650b385a8b4e0016aa, type: 3}
   _avatarSelection: {fileID: 8300000, guid: 8e58a31b7c58fd7ca89a9150ceafc875, type: 3}
@@ -298,7 +299,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 5ad93c598cdd41c279a9b3c665cb7b09, type: 3}
   m_Resource: {fileID: 8300000, guid: 5ad93c598cdd41c279a9b3c665cb7b09, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.05
+  m_Volume: 0.738
   m_Pitch: 1
   Loop: 1
   Mute: 0

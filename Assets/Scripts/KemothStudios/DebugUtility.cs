@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 
@@ -15,6 +16,12 @@ namespace KemothStudios.Utility
         public static void LogError(string message)
         {
                 Debug.LogError(message);
+        }
+        
+        [Conditional("DEBUG")]
+        public static void LogException(Exception exception)
+        {
+            Debug.LogException(exception);
         }
         
         [Conditional("DEBUG")]
