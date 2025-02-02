@@ -27,6 +27,8 @@ namespace KemothStudios
         private void Start()
         {
             GameStates.Instance.GameStateChanged += StartChangeScene;
+            _loadingScreenVisualElement.AddToClassList(Statics.COMMON_CSS_HIDE_LONG);
+            _loadingScreenVisualElement.AddToClassList(Statics.COMMON_CSS_SHOW_LONG);
             if (GameStates.Instance.CurrentState != GameStates.States.NONE)
                 StartChangeScene(GameStates.Instance.CurrentState);
         }
@@ -39,7 +41,7 @@ namespace KemothStudios
             {
                 bool loadingScreenTransitionCompleted = false;
                 _loadingScreenVisualElement.RegisterCallbackOnce<TransitionEndEvent>(_ => loadingScreenTransitionCompleted = true);
-                _loadingScreenVisualElement.RemoveFromClassList("hide");
+                _loadingScreenVisualElement.AddToClassList(Statics.COMMON_CSS_SHOW_LONG);
                 while (!loadingScreenTransitionCompleted)
                 {
                     await Task.Yield();
@@ -58,7 +60,7 @@ namespace KemothStudios
                 _loadingScreenVisualElement.pickingMode = PickingMode.Ignore;
                 EventBus<SceneLoadingCompleteEvent>.RaiseEvent(new SceneLoadingCompleteEvent());
             });
-            _loadingScreenVisualElement.AddToClassList("hide");
+            _loadingScreenVisualElement.RemoveFromClassList(Statics.COMMON_CSS_SHOW_LONG);
         }
 
         private async Task LoadScenes()

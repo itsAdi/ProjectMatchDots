@@ -5,6 +5,11 @@ using KemothStudios.Utility.Events;
 namespace KemothStudios
 {
     /// <summary>
+    /// Called from <b>GameManager</b> to start the game
+    /// </summary>
+    public struct GameStartedEvent : IEvent{}
+    
+    /// <summary>
     /// Called when a major button is used
     /// </summary>
     public struct MajorButtonClickedEvent : IEvent {}
@@ -101,4 +106,46 @@ namespace KemothStudios
     /// Called when a scene has been loaded and loading screen is not visible anymore
     /// </summary>
     public struct SceneLoadingCompleteEvent : IEvent {}
+
+    /// <summary>
+    /// Called when game audio is muted or unmuted
+    /// </summary>
+    public struct GameAudioMuteChangedEvent : IEvent
+    {
+        public bool Mute {get; set;}
+    }
+
+    /// <summary>
+    /// Called when game audio volume is updated and new value is not zero
+    /// </summary>
+    public struct GameAudioVolumeChangedEvent : IEvent
+    {
+        public float Volume {get; set;}
+    }
+
+    /// <summary>
+    /// Called when ui audio is muted or unmuted
+    /// </summary>
+    public struct UIAudioMuteChangedEvent : IEvent
+    {
+        public bool Muted {get; set;}
+    }
+
+    /// <summary>
+    /// Called when UI audio volume is updated and new value is not zero
+    /// </summary>
+    public struct UIAudioVolumeChangedEvent : IEvent
+    {
+        public float Volume {get; set;}
+    }
+    
+    /// <summary>
+    /// Called when settings window needs to be shown
+    /// </summary>
+    public struct ShowSettingsEvent : IEvent {}
+    
+    /// <summary>
+    /// Called when settings window needs to be hidden
+    /// </summary>
+    public struct HideSettingsEvent : IEvent {}
 }
