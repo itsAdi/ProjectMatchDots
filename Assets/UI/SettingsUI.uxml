@@ -1,0 +1,31 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/CommonUICSS.uss?fileID=7433441132597879392&amp;guid=2ae463346034a1b42985f16525aed222&amp;type=3#CommonUICSS" />
+    <Style src="project://database/Assets/UI/SettingsUICSS.uss?fileID=7433441132597879392&amp;guid=b204a7633a98fce708fbe5656c842d93&amp;type=3#SettingsUICSS" />
+    <engine:VisualElement name="bg" class="fitScreen" style="background-color: rgba(0, 0, 0, 0.65); flex-direction: column-reverse; position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
+        <engine:VisualElement name="settingsWindow" style="padding-top: 25px; padding-right: 25px; padding-bottom: 25px; padding-left: 25px; background-color: rgb(255, 255, 255); border-top-left-radius: 20px; border-top-right-radius: 20px;">
+            <engine:VisualElement name="bgMusic">
+                <engine:Label text="Ambient Music" name="heading" display-tooltip-when-elided="false" triple-click-selects-line="false" double-click-selects-word="false" emoji-fallback-support="false" enable-rich-text="false" />
+                <engine:VisualElement name="volumeControls" style="flex-direction: row;">
+                    <engine:Toggle label="Toggle" name="muteToggle" class="majorButton" style="width: 80px; height: 80px; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;" />
+                    <engine:VisualElement name="volumeSlider" style="flex-grow: 1; align-items: stretch; justify-content: center;">
+                        <engine:Slider label="Slider" value="0" high-value="1" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:VisualElement name="gap" style="height: 50px;" />
+            <engine:VisualElement name="uiSound">
+                <engine:Label text="UI Sound" name="heading" display-tooltip-when-elided="false" triple-click-selects-line="false" double-click-selects-word="false" emoji-fallback-support="false" enable-rich-text="false" />
+                <engine:VisualElement name="volumeControls" style="flex-direction: row;">
+                    <engine:Toggle label="Toggle" name="muteToggle" class="majorButton" style="width: 80px; height: 80px; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;" />
+                    <engine:VisualElement name="volumeSlider" style="flex-grow: 1; align-items: stretch; justify-content: center;">
+                        <engine:Slider label="Slider" value="0" high-value="1" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:VisualElement name="gap" style="height: 50px;" />
+            <engine:VisualElement name="done" style="flex-grow: 1;">
+                <engine:Button text="Done" enable-rich-text="false" emoji-fallback-support="false" double-click-selects-word="false" triple-click-selects-line="false" display-tooltip-when-elided="false" class="majorButton" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

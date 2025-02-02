@@ -1,7 +1,7 @@
 using KemothStudios.Board;
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using KemothStudios.Utility;
+using KemothStudios.Utility.Events;
 using UnityEngine;
 
 namespace KemothStudios
@@ -12,11 +12,8 @@ namespace KemothStudios
         [SerializeField] private GameDataSO _gameData;
 
         public static GameResultManager Instance { get; private set; }
-
-        // Passed argument is the index of the winning player index
-        public Action<int> PlayerWon;
-
-        private int _completedCellCount;
+        
+        private EventBinding<BoardReadyAfterDrawLineEvent> _checkGameResult;
 
         private void Awake()
         {
@@ -25,35 +22,31 @@ namespace KemothStudios
 
         void Start()
         {
-            GameManager.Instance.OnCellCompleted += CellCompleted;
+            _checkGameResult = new EventBinding<BoardReadyAfterDrawLineEvent>(CheckGameOver);
+            EventBus<BoardReadyAfterDrawLineEvent>.RegisterBinding(_checkGameResult);
         }
 
         private void OnDestroy()
         {
             Instance = null;
-            GameManager.Instance.OnCellCompleted -= CellCompleted;
+            EventBus<BoardReadyAfterDrawLineEvent>.UnregisterBinding(_checkGameResult);
         }
 
-        private void CellCompleted(IEnumerable<Cell> enumerable)
+        private void CheckGameOver()
         {
-            IEnumerator enumerator = enumerable.GetEnumerator();
-            while(enumerator.MoveNext()) _completedCellCount++;
-            if (_completedCellCount == _boardData.TotalCellsCount)
+            if (_boardData.CompletedCellsCount == _boardData.TotalCellsCount)
             {
-                int flagIndex = 0;
-                int flagScore = 0;
-                int currentIndex = 0;
-                foreach (Player player in _gameData.Players)
+                if (_gameData.TryGetPlayer(0, out Player flagPlayer))
                 {
-                    if(player.Score > flagScore)
+                    foreach (Player player in _gameData.Players)
                     {
-                        flagScore = player.Score;
-                        flagIndex = currentIndex;
+                        if (player.GetScore > flagPlayer.GetScore)
+                            flagPlayer = player;
                     }
-                    currentIndex++;
+                    EventBus<PlayerWonEvent>.RaiseEvent(new PlayerWonEvent(flagPlayer));
                 }
-                PlayerWon?.Invoke(flagIndex);
+                else DebugUtility.LogError("Failed to get player on index 0 while trying to compute game result");
             }
         }
-    } 
+    }
 }

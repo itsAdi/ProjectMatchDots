@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Text;
+using KemothStudios.Utility.Events;
 using UnityEngine;
 
 namespace KemothStudios.Board
@@ -9,26 +11,27 @@ namespace KemothStudios.Board
         [SerializeField] private GameObject _linePrefab;
 
         private Dictionary<int, GameObject> _lineVisuals;
-
-        private void Start()
+        private EventBinding<DrawLineEvent> _drawLineEvent;
+        
+        void Start()
         {
-            GameManager.Instance.OnLineClicked += ShowLine;
-            _lineVisuals = new();
+            _drawLineEvent = new EventBinding<DrawLineEvent>(ShowLine);
+            EventBus<DrawLineEvent>.RegisterBinding(_drawLineEvent);
         }
 
         private void OnDestroy()
         {
-            if (GameManager.Instance != null)
-                GameManager.Instance.OnLineClicked -= ShowLine;
+            EventBus<DrawLineEvent>.UnregisterBinding(_drawLineEvent);
         }
 
-        private void ShowLine(Line line)
+        private void ShowLine(DrawLineEvent lineData)
         {
-            _lineVisuals[line.GetHashCode()].SetActive(true);
+            _lineVisuals[lineData.Line.GetHashCode()].SetActive(true);
         }
 
         public void DrawBoardGraphic()
         {
+            _lineVisuals = new();
             foreach (Line line in _boardData.Lines)
             {
                 GameObject obj;

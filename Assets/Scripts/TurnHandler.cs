@@ -1,4 +1,5 @@
-using System;
+using KemothStudios.Utility;
+using KemothStudios.Utility.Events;
 using UnityEngine;
 
 namespace KemothStudios
@@ -6,49 +7,71 @@ namespace KemothStudios
     public class TurnHandler : MonoBehaviour
     {
         [SerializeField] private GameDataSO _gameDataSO;
+        
+        public Player CurrentPlayer { get; private set; }
+        public Player LastPlayer { get; private set; }
 
-        public static TurnHandler Instance;
-
-        public bool IsReady { get; private set; }
-        public Action TurnUpdated;
-        public int CurrentPlayerIndex { get; private set; }
-        public int LastPlayerIndex { get; private set; }
-
-        private void Awake()
-        {
-            if (Instance == null)
-                Instance = this;
-            else
-            {
-                if (Instance != this)
-                    Destroy(gameObject);
-            }
-        }
+        private int _currentPlayerIndex;
+        private EventBinding<CellAcquireCompletedEvent> _cellAcquireCompleted;
+        private EventBinding<GameStartedEvent> _gameStarted;
+        private EventBinding<BoardReadyAfterDrawLineEvent> _boardReadyAfterDrawLine;
+        private EventBinding<PlayerWonEvent> _playerWon;
+        private bool _canChangeTurn;
 
         private void Start()
         {
-            CurrentPlayerIndex = 0;
-            LastPlayerIndex = -1;
-            TurnUpdated?.Invoke();
-            IsReady = true;
-
+            LastPlayer = default;
+            _canChangeTurn = true;
+            _cellAcquireCompleted = new EventBinding<CellAcquireCompletedEvent>(DisableTurnChange);
+            EventBus<CellAcquireCompletedEvent>.RegisterBinding(_cellAcquireCompleted);
+            _boardReadyAfterDrawLine = new EventBinding<BoardReadyAfterDrawLineEvent>(ChangeTurn);
+            EventBus<BoardReadyAfterDrawLineEvent>.RegisterBinding(_boardReadyAfterDrawLine);
+            _gameStarted = new EventBinding<GameStartedEvent>(StartGame);
+            EventBus<GameStartedEvent>.RegisterBinding(_gameStarted);
+            _playerWon = new EventBinding<PlayerWonEvent>(EndCurrentPlayerTurnOnGameOver);
+            EventBus<PlayerWonEvent>.RegisterBinding(_playerWon);
         }
+
 
         private void OnDestroy()
         {
-            IsReady = false;
-            TurnUpdated = null;
-            CurrentPlayerIndex = 0;
-            LastPlayerIndex = -1;
-            if (Instance == this)
-                Instance = null;
+            CurrentPlayer = default;
+            LastPlayer = default;
+            _currentPlayerIndex = 0;
+            EventBus<CellAcquireCompletedEvent>.UnregisterBinding(_cellAcquireCompleted);
+            EventBus<BoardReadyAfterDrawLineEvent>.UnregisterBinding(_boardReadyAfterDrawLine);
+            EventBus<GameStartedEvent>.UnregisterBinding(_gameStarted);
+            EventBus<PlayerWonEvent>.UnregisterBinding(_playerWon);
         }
 
-        public void ChangeTurn()
+        private void EndCurrentPlayerTurnOnGameOver(PlayerWonEvent obj) => EventBus<TurnEndedEvent>.RaiseEvent(new TurnEndedEvent(obj.WinnerPlayer));
+        private void StartGame() => RaiseTurnStartEvent(0);
+        private void DisableTurnChange() => _canChangeTurn = false;
+
+        private void ChangeTurn()
         {
-            LastPlayerIndex = CurrentPlayerIndex;
-            CurrentPlayerIndex = (CurrentPlayerIndex + 1) % _gameDataSO.PlayerCount;
-            TurnUpdated?.Invoke();
+            if (_canChangeTurn)
+            {
+                LastPlayer = CurrentPlayer;
+                if (!LastPlayer.Equals(default(Player)))
+                {
+                    EventBus<TurnEndedEvent>.RaiseEvent(new TurnEndedEvent(LastPlayer));
+                    RaiseTurnStartEvent((_currentPlayerIndex + 1) % _gameDataSO.PlayerCount);
+                }
+                else DebugUtility.LogError("No valid player found to change turn");
+            }
+            _canChangeTurn = true;
+        }
+
+        private void RaiseTurnStartEvent(int playerIndex)
+        {
+            if (_gameDataSO.TryGetPlayer(playerIndex, out var player))
+            {
+                CurrentPlayer = player;
+                _currentPlayerIndex = playerIndex;
+                EventBus<TurnStartedEvent>.RaiseEvent(new TurnStartedEvent(player));
+            }
+            else DebugUtility.LogError($"Could not find player on index {playerIndex}, turn could not be started");
         }
     }
 }
