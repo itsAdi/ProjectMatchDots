@@ -5,7 +5,7 @@ using KemothStudios.Utility.Events;
 namespace KemothStudios
 {
     /// <summary>
-    /// Called from <b>GameManager</b> to start the game
+    /// Should be called once for a game when the game scene is fully loaded and there is no loading screen
     /// </summary>
     public struct GameStartedEvent : IEvent{}
     
@@ -148,4 +148,9 @@ namespace KemothStudios
     /// Called when settings window needs to be hidden
     /// </summary>
     public struct HideSettingsEvent : IEvent {}
+    
+    /// <summary>
+    /// Called when a scene reload is needed
+    /// </summary>
+    public struct RestartSceneEvent : IEvent {}
 }

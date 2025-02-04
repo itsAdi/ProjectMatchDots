@@ -17,8 +17,11 @@
                     <LabelAutoFit text="999" ratio="1.75" axis="Horizontal" name="playerScore" style="height: 100%; font-size: 74px; -unity-text-align: upper-right; -unity-font-style: normal; justify-content: center; align-items: flex-start;" />
                 </engine:VisualElement>
             </engine:VisualElement>
-            <engine:VisualElement name="home">
-                <engine:Button text="Home" name="HomeButton" class="majorButton" />
+            <engine:VisualElement name="restart" class="buttons">
+                <engine:Button text="Restart" name="restartButton" enable-rich-text="false" emoji-fallback-support="false" double-click-selects-word="false" triple-click-selects-line="false" display-tooltip-when-elided="false" class="majorButton" />
+            </engine:VisualElement>
+            <engine:VisualElement name="home" class="buttons">
+                <engine:Button text="Home" name="HomeButton" emoji-fallback-support="false" enable-rich-text="false" double-click-selects-word="false" triple-click-selects-line="false" display-tooltip-when-elided="false" class="majorButton" />
             </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>
