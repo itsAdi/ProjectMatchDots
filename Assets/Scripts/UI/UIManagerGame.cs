@@ -1,6 +1,5 @@
 using System;
 using KemothStudios.Board;
-using System.Collections;
 using System.Threading.Tasks;
 using KemothStudios.Utility;
 using KemothStudios.Utility.Events;
@@ -10,7 +9,7 @@ using UnityEngine.UIElements;
 namespace KemothStudios.UI
 {
     /// <summary>
-    /// Handles game UI, currently hardcoded for 2 players only because of how the UI is setup
+    /// Handles game UI, currently hardcoded for 2 players only because of how the UI is set up
     /// </summary>
     public class UIManagerGame : MonoBehaviour
     {
@@ -25,6 +24,7 @@ namespace KemothStudios.UI
         private VisualElement _gameResultUI, _gameResultUIPlayerAvatar;
         private LabelAutoFit _gameResultUIPlayerName, _gameResultUIPlayerScore;
         private Button _gameResultUIHomeButton;
+        private Button _gameResultUIRestartButton;
         private VisualElement[] _cellIcons;
         private EventBinding<CellAcquiredEvent> _cellCompleted;
         private EventBinding<ScoreUpdatedEvent> _scoreUpdated;
@@ -34,7 +34,7 @@ namespace KemothStudios.UI
         private EventBinding<TurnEndedEvent> _turnEnded;
         private Player _currentPlayer;
 
-        private IEnumerator Start()
+        private void Start()
         {
             // Setup score UI ...
             _playerUI = new[]
@@ -68,15 +68,15 @@ namespace KemothStudios.UI
             EventBus<TurnEndedEvent>.RegisterBinding(_turnEnded);
 
             // Setup Game Result UI ...
-            yield return new WaitUntil(() => GameResultManager.Instance != null);
-            _gameResultUI = _gameResultUIDocument.rootVisualElement.Q<VisualElement>("gameResultUI");
-            _gameResultUIPlayerName = _gameResultUI.Q<LabelAutoFit>("playerName");
-            _gameResultUIPlayerScore = _gameResultUI.Q<LabelAutoFit>("playerScore");
-            _gameResultUIPlayerAvatar = _gameResultUI.Q<VisualElement>("playerAvatar");
-            _gameResultUIHomeButton = _gameResultUI.Q<Button>("HomeButton");
+            _gameResultUI = _gameResultUIDocument.rootVisualElement.GetVisualElement("gameResultUI", "gameResultUI not found in game result UI document");
+            _gameResultUIPlayerName = _gameResultUI.GetVisualElement<LabelAutoFit>("playerName", "playerName not found in game result UI");
+            _gameResultUIPlayerScore = _gameResultUI.GetVisualElement<LabelAutoFit>("playerScore", "playerScore not found in game result UI");
+            _gameResultUIPlayerAvatar = _gameResultUI.GetVisualElement<VisualElement>("playerAvatar", "playerAvatar not found in game result UI");
+            _gameResultUIHomeButton = _gameResultUI.GetVisualElement<Button>("HomeButton", "homeButton not found in game result UI");
+            _gameResultUIRestartButton = _gameResultUI.GetVisualElement<Button>("restartButton", "restartButton not found in game result UI");
 
             // Setup Cell Owner Avatars UI ...
-            VisualElement elem = _uiDocument.rootVisualElement.Q<VisualElement>("cellOwnerAvatarContainer");
+            VisualElement elem = _uiDocument.rootVisualElement.GetVisualElement<VisualElement>("cellOwnerAvatarContainer", "cellOwnerAvatarContainer not found in UIDocument root");
             Rect r = _boardDataSO.GetCell(0).CellTransform;
             Vector2 min = Camera.main.WorldToViewportPoint(new Vector2(r.min.x, r.max.y));
             r = _boardDataSO.GetCell(_boardDataSO.TotalCellsCount - 1).CellTransform;
@@ -167,6 +167,18 @@ namespace KemothStudios.UI
                 EventBus<MajorButtonClickedEvent>.RaiseEvent(new MajorButtonClickedEvent());
                 GameStates.Instance.CurrentState = GameStates.States.MAIN_MENU;
             };
+            _gameResultUIRestartButton.clicked += () =>
+            {
+                EventBus<MajorButtonClickedEvent>.RaiseEvent(new MajorButtonClickedEvent());
+                Player[] players = new Player[_gameDataSO.PlayerCount];
+                foreach (Player player in _gameDataSO.Players)
+                {
+                    Player p = new Player(player.Name, player.AvatarIndex, player.PlayerIndex, _gameDataSO);
+                    players[player.PlayerIndex] = p;
+                }
+                _gameDataSO.InitializePlayerData(players);
+                EventBus<RestartSceneEvent>.RaiseEvent(new RestartSceneEvent());
+            };
         }
 
         private void ShowTurnIndicator(TurnStartedEvent turnData)
@@ -188,15 +200,15 @@ namespace KemothStudios.UI
         // Struct to handle each player details panel
         private struct UIData
         {
-            public VisualElement PlayerAvatar { get; private set; }
-            public Label PlayerName { get; private set; }
-            public Label PlayerScore { get; private set; }
+            public VisualElement PlayerAvatar { get; }
+            public Label PlayerName { get; }
+            public Label PlayerScore { get; }
 
             private VisualElement _turnIndicator;
             private bool _turnIndicatorActive;
 
             // Saving callback here because RegisterCallback//UnRegisterCallback methods saves a reference to the method
-            // and we are using a struct and structs are not reference types, so after registering we would not be able
+            // we are using a struct and structs are not reference types, so after registering we would not be able
             // to unregister it because reference will be different
             EventCallback<TransitionEndEvent> _callback;
 

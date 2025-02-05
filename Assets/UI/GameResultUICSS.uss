@@ -17,7 +17,14 @@
     height: 250px;
 }
 
-#home {
+.buttons {
+    height: 100px;
+    overflow: hidden;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.buttons {
     height: 100px;
     overflow: hidden;
     align-items: center;
@@ -27,7 +34,7 @@
     width: 100%;
 }
 
-#home > Button {
+.buttons > Button {
     width: 90%;
 }
 

@@ -23,6 +23,7 @@ namespace KemothStudios.Board
         private FiniteStateMachine _boardStateMachine;
         private TriggerPredicate _enableInputTrigger = new(), _cellAcquireTrigger = new(), _gameOverTrigger = new();
         private BoardStateAcquiringCell.StateData _cellAcquireStateData;
+        private EventBinding<SceneLoadingCompleteEvent> _sceneLoadComplete;
 
         void Start()
         {
@@ -37,6 +38,8 @@ namespace KemothStudios.Board
             EventBus<DrawLineEvent>.RegisterBinding(_drawLineEvent);
             _startGameEvent = new EventBinding<GameStartedEvent>(() => { _enableInputTrigger.EnableTrigger(); });
             EventBus<GameStartedEvent>.RegisterBinding(_startGameEvent);
+            _sceneLoadComplete = new EventBinding<SceneLoadingCompleteEvent>(StartGame);
+            EventBus<SceneLoadingCompleteEvent>.RegisterBinding(_sceneLoadComplete);
             _cellAcquireCompletedEvent = new EventBinding<CellAcquireCompletedEvent>(() =>
             {
                 if (_boardData.CompletedCellsCount != _boardData.TotalCellsCount)
@@ -56,8 +59,15 @@ namespace KemothStudios.Board
             EventBus<DrawLineEvent>.UnregisterBinding(_drawLineEvent);
             EventBus<GameStartedEvent>.UnregisterBinding(_startGameEvent);
             EventBus<CellAcquireCompletedEvent>.UnregisterBinding(_cellAcquireCompletedEvent);
+            EventBus<SceneLoadingCompleteEvent>.UnregisterBinding(_sceneLoadComplete);
         }
 
+        private void StartGame()
+        {
+            if(GameStates.Instance.CurrentState == GameStates.States.GAME)
+                EventBus<GameStartedEvent>.RaiseEvent(new GameStartedEvent());
+        }
+        
         private void CheckForCompletedCells(DrawLineEvent lineData)
         {
             List<Cell> completedCells = new();

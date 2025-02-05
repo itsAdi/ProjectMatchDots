@@ -15,6 +15,7 @@ namespace KemothStudios
 
         private GameStates.States _scenesToLoad, _scenesToUnload;
         private VisualElement _loadingScreenVisualElement;
+        private EventBinding<RestartSceneEvent> _restartSceneBinding;
 
         // Used for the case where this is the first time we are loading the game and loading screen is already visible...
         private bool _firstLoadDone;
@@ -31,14 +32,24 @@ namespace KemothStudios
             _loadingScreenVisualElement.AddToClassList(Statics.COMMON_CSS_SHOW_LONG);
             if (GameStates.Instance.CurrentState != GameStates.States.NONE)
                 StartChangeScene(GameStates.Instance.CurrentState);
+            _restartSceneBinding = new EventBinding<RestartSceneEvent>(RestartCurrentScene);
+            EventBus<RestartSceneEvent>.RegisterBinding(_restartSceneBinding);
         }
 
-        private async void StartChangeScene(GameStates.States currentState)
+        private void OnDestroy()
         {
-            _scenesToLoad = currentState;
-            _loadingScreenVisualElement.pickingMode = PickingMode.Position;
-            if (_firstLoadDone)
+            GameStates.Instance.GameStateChanged -= StartChangeScene;
+            EventBus<RestartSceneEvent>.UnregisterBinding(_restartSceneBinding);
+        }
+
+        private async void RestartCurrentScene()
+        {
+            Statics.Assert(()=>_firstLoadDone, "Found nothing reload");
+            try
             {
+                _scenesToLoad = GameStates.Instance.CurrentState;
+                _loadingScreenVisualElement.pickingMode = PickingMode.Position;
+                
                 bool loadingScreenTransitionCompleted = false;
                 _loadingScreenVisualElement.RegisterCallbackOnce<TransitionEndEvent>(_ => loadingScreenTransitionCompleted = true);
                 _loadingScreenVisualElement.AddToClassList(Statics.COMMON_CSS_SHOW_LONG);
@@ -46,21 +57,58 @@ namespace KemothStudios
                 {
                     await Task.Yield();
                 }
-            }
-            else
-            {
-                _firstLoadDone = true;
-            }
 
-            await UnloadScenes();
-            await LoadScenes();
+                await UnloadScenes();
+                await LoadScenes();
 
-            _loadingScreenVisualElement.RegisterCallbackOnce<TransitionEndEvent>(_ =>
+                _loadingScreenVisualElement.RegisterCallbackOnce<TransitionEndEvent>(_ =>
+                {
+                    _loadingScreenVisualElement.pickingMode = PickingMode.Ignore;
+                    EventBus<SceneLoadingCompleteEvent>.RaiseEvent(new SceneLoadingCompleteEvent());
+                });
+                _loadingScreenVisualElement.RemoveFromClassList(Statics.COMMON_CSS_SHOW_LONG);
+            }
+            catch (Exception e)
             {
-                _loadingScreenVisualElement.pickingMode = PickingMode.Ignore;
-                EventBus<SceneLoadingCompleteEvent>.RaiseEvent(new SceneLoadingCompleteEvent());
-            });
-            _loadingScreenVisualElement.RemoveFromClassList(Statics.COMMON_CSS_SHOW_LONG);
+                DebugUtility.LogException(e);
+            }
+        }
+
+        private async void StartChangeScene(GameStates.States currentState)
+        {
+            try
+            {
+                _scenesToLoad = currentState;
+                _loadingScreenVisualElement.pickingMode = PickingMode.Position;
+                if (_firstLoadDone)
+                {
+                    bool loadingScreenTransitionCompleted = false;
+                    _loadingScreenVisualElement.RegisterCallbackOnce<TransitionEndEvent>(_ => loadingScreenTransitionCompleted = true);
+                    _loadingScreenVisualElement.AddToClassList(Statics.COMMON_CSS_SHOW_LONG);
+                    while (!loadingScreenTransitionCompleted)
+                    {
+                        await Task.Yield();
+                    }
+                }
+                else
+                {
+                    _firstLoadDone = true;
+                }
+
+                await UnloadScenes();
+                await LoadScenes();
+
+                _loadingScreenVisualElement.RegisterCallbackOnce<TransitionEndEvent>(_ =>
+                {
+                    _loadingScreenVisualElement.pickingMode = PickingMode.Ignore;
+                    EventBus<SceneLoadingCompleteEvent>.RaiseEvent(new SceneLoadingCompleteEvent());
+                });
+                _loadingScreenVisualElement.RemoveFromClassList(Statics.COMMON_CSS_SHOW_LONG);
+            }
+            catch (Exception e)
+            {
+                DebugUtility.LogException(e);
+            }
         }
 
         private async Task LoadScenes()
