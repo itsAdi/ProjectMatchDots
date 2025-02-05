@@ -10,6 +10,7 @@ namespace KemothStudios
 {
     public class SceneLoader : MonoBehaviour
     {
+        [SerializeField, Tooltip("Scenes that will never unload")] private SceneField[] _defaultScenes;
         [SerializeField] SerializableDictionary<GameStates.States, SceneField[]> scenes;
         [SerializeField] private UIDocument loadingScreen;
 
@@ -93,6 +94,13 @@ namespace KemothStudios
                 else
                 {
                     _firstLoadDone = true;
+                    
+                    // load default scene here because we are loading game for the first time
+                    foreach (SceneField sceneName in _defaultScenes)
+                    {
+                        AsyncOperation op = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+                        while (!op.isDone) await Task.Yield();
+                    }
                 }
 
                 await UnloadScenes();
