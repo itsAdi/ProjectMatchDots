@@ -10,15 +10,8 @@ namespace KemothStudios
     {
         [SerializeField] private BoardDataSO _boardData;
         [SerializeField] private GameDataSO _gameData;
-
-        public static GameResultManager Instance { get; private set; }
         
         private EventBinding<BoardReadyAfterDrawLineEvent> _checkGameResult;
-
-        private void Awake()
-        {
-            Instance = this;
-        }
 
         void Start()
         {
@@ -28,7 +21,6 @@ namespace KemothStudios
 
         private void OnDestroy()
         {
-            Instance = null;
             EventBus<BoardReadyAfterDrawLineEvent>.UnregisterBinding(_checkGameResult);
         }
 
