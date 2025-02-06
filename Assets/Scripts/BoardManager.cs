@@ -15,6 +15,9 @@ namespace KemothStudios.Board
         [SerializeField, Min(0f), Tooltip("Delay after which cell completion process completes")]
         private float _cellCompletionDelay = 0.15f;
 
+        [SerializeField, Tooltip("Camera clear color when we are on board scene")]
+        private Color _boardSceneColor = Color.black;
+
         [SerializeField] private BoardDataSO _boardData;
 
         private EventBinding<DrawLineEvent> _drawLineEvent;
@@ -24,6 +27,8 @@ namespace KemothStudios.Board
         private TriggerPredicate _enableInputTrigger = new(), _cellAcquireTrigger = new(), _gameOverTrigger = new();
         private BoardStateAcquiringCell.StateData _cellAcquireStateData;
         private EventBinding<SceneLoadingCompleteEvent> _sceneLoadComplete;
+
+        private Color _originalCameraBakcgroundColor;
 
         void Start()
         {
@@ -47,6 +52,8 @@ namespace KemothStudios.Board
                 else _gameOverTrigger.EnableTrigger();
             });
             EventBus<CellAcquireCompletedEvent>.RegisterBinding(_cellAcquireCompletedEvent);
+            _originalCameraBakcgroundColor = Camera.main.backgroundColor;
+            Camera.main.backgroundColor = _boardSceneColor;
         }
 
         private void Update()
@@ -56,6 +63,7 @@ namespace KemothStudios.Board
 
         private void OnDestroy()
         {
+            if(Camera.main != null) Camera.main.backgroundColor = _originalCameraBakcgroundColor;
             EventBus<DrawLineEvent>.UnregisterBinding(_drawLineEvent);
             EventBus<GameStartedEvent>.UnregisterBinding(_startGameEvent);
             EventBus<CellAcquireCompletedEvent>.UnregisterBinding(_cellAcquireCompletedEvent);

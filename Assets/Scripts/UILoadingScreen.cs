@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace KemothStudios
 {
-    public class LoadingScreen : MonoBehaviour
+    public class UILoadingScreen : MonoBehaviour
     {
         [SerializeField] private UIDocument _uiDocument;
         

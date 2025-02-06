@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace KemothStudios
 {
-    public class MessagePopup : MonoBehaviour
+    public class UIMessagePopup : MonoBehaviour
     {
         [SerializeField] private UIDocument _uiDocument;
 
@@ -30,6 +30,7 @@ namespace KemothStudios
             _hidePopupButton = _popup.GetVisualElement("responseButton", "Response button container not found").GetVisualElement<Button>("Button object for response button not found");
             _popup.AddToClassList("show");
             _popup.AddToClassList("hide");
+            _uiDocument.rootVisualElement.pickingMode = PickingMode.Ignore;
             _hidePopupButton.clicked += HidePopupWindow;
             _isInitialized = true;
         }
@@ -49,6 +50,7 @@ namespace KemothStudios
             if(!_isInitialized || _isShowing) return;
             _isShowing = true;
             _messageText.text = messageData.Message;
+            _uiDocument.rootVisualElement.pickingMode = PickingMode.Position;
             _popup.RemoveFromClassList("hide");
         }
 
@@ -56,6 +58,7 @@ namespace KemothStudios
         {
             if(!_isInitialized || !_isShowing) return;
             _isShowing = false;
+            _uiDocument.rootVisualElement.pickingMode = PickingMode.Ignore;
             _popup.AddToClassList("hide");
         }
         
