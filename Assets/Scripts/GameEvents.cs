@@ -153,4 +153,32 @@ namespace KemothStudios
     /// Called when a scene reload is needed
     /// </summary>
     public struct RestartSceneEvent : IEvent {}
+
+    /// <summary>
+    /// Shows normal message popup
+    /// </summary>
+    public struct ShowMessageEvent : IEvent
+    {
+        public string Message {get; set;}
+    }
+    
+    /// <summary>
+    /// Hides any message popup visible
+    /// </summary>
+    public struct HideMessageEvent : IEvent {}
+    
+    /// <summary>
+    /// Shows loading screen
+    /// </summary>
+    public struct ShowLoadingScreenEvent : IEvent {}
+    
+    /// <summary>
+    /// Hides loading screen
+    /// </summary>
+    public struct HideLoadingScreenEvent : IEvent {}
+    
+    /// <summary>
+    /// Called when transition of loading screen is completed when either showing it or hiding it
+    /// </summary>
+    public struct LoadingScreenTransitionCompleteEvent : IEvent {}
 }

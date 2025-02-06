@@ -257,7 +257,6 @@ MonoBehaviour:
         m_SceneName: Assets/Scenes/Game.unity
       - m_SceneAsset: {fileID: 102900000, guid: 7d55fa1214f5387498e9d9c9b2688185, type: 3}
         m_SceneName: Assets/Scenes/UIGame.unity
-  loadingScreen: {fileID: 0}
 --- !u!4 &583544022
 Transform:
   m_ObjectHideFlags: 0

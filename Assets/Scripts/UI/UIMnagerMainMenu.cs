@@ -23,6 +23,7 @@ namespace KemothStudios
         private int _enabledPlayerAvatarTab; // actually the index to use in _playerAvatarIndices
         private bool _updatingAvatarsView;
         private VisualElement _settingsCog;
+        private ShowMessageEvent _showMessageEvent;
 
         private void Start()
         {
@@ -127,13 +128,15 @@ namespace KemothStudios
             
             if (string.IsNullOrEmpty(_playerAName.text) || string.IsNullOrEmpty(_playerBName.text))
             {
-                DebugUtility.LogColored("red", "Player names are required");
+                _showMessageEvent.Message = "Player names are required";
+                EventBus<ShowMessageEvent>.RaiseEvent(_showMessageEvent);
                 return;
             }
 
             if (_playerAName.text.Length < 3 || _playerBName.text.Length < 3)
             {
-                DebugUtility.LogColored("red", "Player names must be at least 3 characters");
+                _showMessageEvent.Message = "Player names must be at least 3 characters";
+                EventBus<ShowMessageEvent>.RaiseEvent(_showMessageEvent);
                 return;
             }
             Player playerA = new(_playerAName.text, _playerAvatarIndices[0], 0, _gameData);

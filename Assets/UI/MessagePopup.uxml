@@ -1,7 +1,7 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/MessagePopup.uss?fileID=7433441132597879392&amp;guid=971415d478226536fa0910d8d4ed3f02&amp;type=3#MessagePopup" />
     <Style src="project://database/Assets/UI/CommonUICSS.uss?fileID=7433441132597879392&amp;guid=2ae463346034a1b42985f16525aed222&amp;type=3#CommonUICSS" />
-    <engine:VisualElement name="messagePopupContainer" style="flex-grow: 1; justify-content: flex-end;">
+    <engine:VisualElement name="messagePopupContainer" picking-mode="Ignore" style="flex-grow: 1; justify-content: flex-end;">
         <engine:VisualElement name="windowContainer" class="show">
             <engine:VisualElement name="window">
                 <engine:Label text="Message text" name="messageText" display-tooltip-when-elided="false" triple-click-selects-line="false" double-click-selects-word="false" emoji-fallback-support="false" enable-rich-text="false" style="font-size: 35px; text-overflow: ellipsis; white-space: pre-wrap; max-height: 180px; overflow: hidden;" />
