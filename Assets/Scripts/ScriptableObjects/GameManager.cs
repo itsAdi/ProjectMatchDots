@@ -6,7 +6,7 @@ namespace KemothStudios
     {
         private void Start()
         {
-            GameStates.Instance.CurrentState = GameStates.States.MAIN_MENU;
+            new CrashReporting().Initialize();
         }
     }
 }

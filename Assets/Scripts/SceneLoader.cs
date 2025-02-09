@@ -1,9 +1,9 @@
 using System;
 using KemothStudios.Utility;
-using System.Threading.Tasks;
 using KemothStudios.Utility.Events;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Cysharp.Threading.Tasks;
 
 namespace KemothStudios
 {
@@ -24,7 +24,7 @@ namespace KemothStudios
             GameStates.Instance.GameStateChanged += StartChangeScene;
             if (GameStates.Instance.CurrentState != GameStates.States.NONE)
                 StartChangeScene(GameStates.Instance.CurrentState);
-            _restartSceneBinding = new EventBinding<RestartSceneEvent>(RestartCurrentScene);
+            _restartSceneBinding = new EventBinding<RestartSceneEvent>(RestartCurrentSceneWrapper);
             EventBus<RestartSceneEvent>.RegisterBinding(_restartSceneBinding);
         }
 
@@ -34,7 +34,10 @@ namespace KemothStudios
             EventBus<RestartSceneEvent>.UnregisterBinding(_restartSceneBinding);
         }
 
-        private async void RestartCurrentScene()
+        // Wrapper method for RestartCurrentScene because it returns an UniTaskVoid and we cannot use it in our event binding
+        private void RestartCurrentSceneWrapper() => RestartCurrentScene().Forget();
+        
+        private async UniTaskVoid RestartCurrentScene()
         {
             Statics.Assert(()=>_firstLoadDone, "Found nothing reload");
             try
@@ -47,7 +50,7 @@ namespace KemothStudios
                 
                 while (!loadingScreenTransitionCompleted)
                 {
-                    await Task.Yield();
+                    await UniTask.Yield();
                 }
 
                 await UnloadScenes();
@@ -74,7 +77,7 @@ namespace KemothStudios
                     EventBus<ShowLoadingScreenEvent>.RaiseEvent(new ShowLoadingScreenEvent());
                     while (!loadingScreenTransitionCompleted)
                     {
-                        await Task.Yield();
+                        await UniTask.Yield();
                     }
                 }
                 else
@@ -85,7 +88,7 @@ namespace KemothStudios
                     foreach (SceneField sceneName in _defaultScenes)
                     {
                         AsyncOperation op = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-                        while (!op.isDone) await Task.Yield();
+                        while (!op.isDone) await UniTask.Yield();
                     }
                 }
 
@@ -101,7 +104,7 @@ namespace KemothStudios
             }
         }
 
-        private async Task LoadScenes()
+        private async UniTask LoadScenes()
         {
             if (_scenesToLoad is GameStates.States.NONE) return;
             if (scenes.TryGetValue(_scenesToLoad, out SceneField[] scenesToLoad))
@@ -109,7 +112,7 @@ namespace KemothStudios
                 foreach (SceneField sceneName in scenesToLoad)
                 {
                     AsyncOperation op = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-                    while (!op.isDone) await Task.Yield();
+                    while (!op.isDone) await UniTask.Yield();
                 }
             }
 
@@ -117,13 +120,13 @@ namespace KemothStudios
             _scenesToLoad = GameStates.States.NONE;
         }
 
-        private async Task UnloadScenes()
+        private async UniTask UnloadScenes()
         {
             if (_scenesToUnload is GameStates.States.NONE) return;
             foreach (SceneField scenes in scenes[_scenesToUnload])
             {
                 AsyncOperation op = SceneManager.UnloadSceneAsync(scenes);
-                while (!op.isDone) await Task.Yield();
+                while (!op.isDone) await UniTask.Yield();
             }
 
             _scenesToUnload = GameStates.States.NONE;

@@ -1,6 +1,6 @@
 using System;
 using KemothStudios.Board;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using KemothStudios.Utility;
 using KemothStudios.Utility.Events;
 using UnityEngine;
@@ -51,7 +51,7 @@ namespace KemothStudios.UI
                 _playerUI[i].PlayerScore.text = "0";
             }
 
-            _playerWon = new EventBinding<PlayerWonEvent>(StartVictorySequence);
+            _playerWon = new EventBinding<PlayerWonEvent>(StartVictorySequenceWrapper);
             EventBus<PlayerWonEvent>.RegisterBinding(_playerWon);
 
             _scoreUpdated = new EventBinding<ScoreUpdatedEvent>(UpdateScoreText);
@@ -136,14 +136,17 @@ namespace KemothStudios.UI
                 _playerUI[_currentPlayer.PlayerIndex].PlayerScore.text = score.ToString();
         }
 
+        // Wrapper method for StartVictorySequence because it returns an UniTaskVoid and we cant use it directly in our event binding
+        private void StartVictorySequenceWrapper(PlayerWonEvent wonEvent) => StartVictorySequence(wonEvent).Forget();
+        
         /// <summary>
         /// Stops turn indicator and after a delay shows victory screen
         /// </summary>
-        private async void StartVictorySequence(PlayerWonEvent winnerData)
+        private async UniTaskVoid StartVictorySequence(PlayerWonEvent winnerData)
         {
             try
             {
-                await Task.Delay(_gameResultUIShowDelay * 1000);
+                await UniTask.Delay(_gameResultUIShowDelay * 1000);
                 EventBus<ShowVictoryEvent>.RaiseEvent(new ShowVictoryEvent(winnerData.WinnerPlayer));
             }
             catch (Exception e)
