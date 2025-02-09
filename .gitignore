@@ -11,6 +11,11 @@
 /[Mm]emoryCaptures/
 .utmp/
 .idea/
+[Aa]ssets/GeneratedLocalRepo/
+[Aa]ssets/Firebase/
+[Aa]ssets/ExternalDependencyManager/
+[Aa]ssets/Editor Default Resources/Firebase/
+[Aa]ssets/Plugins/Android/Firebase*/
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
 
@@ -70,3 +75,14 @@ UserSettings/
 Packages/
 
 .vsconfig
+
+Assets/GeneratedLocalRepo.meta
+
+
+Assets/Editor Default Resources/Firebase.meta
+
+Assets/ExternalDependencyManager.meta
+
+Assets/Firebase.meta
+
+Assets/Plugins/Android/*Firebase*
