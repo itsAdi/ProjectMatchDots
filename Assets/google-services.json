@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "878764953270",
+    "project_id": "squareclaim-kemothstudios",
+    "storage_bucket": "squareclaim-kemothstudios.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:878764953270:android:48794d5e37bf5a3468a017",
+        "android_client_info": {
+          "package_name": "com.kemothstudios.squareclaim"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCj7Lqzv6nJhvWuvq5o9RC2RpLKdivsuuA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
