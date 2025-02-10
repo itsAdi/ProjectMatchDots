@@ -3,21 +3,29 @@
     <ui:VisualElement name="container" style="flex-grow: 1;">
         <ui:VisualElement name="playerDetailsContainer" class="playerDetailsContainer">
             <ui:VisualElement name="playerAContainer" class="playerData_leftToRight">
-                <ui:VisualElement name="playerAvatar" class="playerAvatar">
-                    <ui:VisualElement name="turnIndicator" class="turnIndicator" />
+                <ui:VisualElement name="playerAvatar">
+                    <ui:VisualElement name="icon" class="playerAvatar">
+                        <ui:VisualElement name="turnIndicator" class="turnIndicator" />
+                    </ui:VisualElement>
+                    <KemothStudios.UI.ProgressBar fill-amount="30.1" name="turnTimer" direction="LEFT" class="turnTimerBar" />
                 </ui:VisualElement>
                 <ui:VisualElement name="playerDetails" class="playerDetails playerDetails_left">
-                    <ui:Label tabindex="-1" text="Player Name" parse-escape-sequences="true" display-tooltip-when-elided="true" name="playerName" style="color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 35px;" />
-                    <ui:Label tabindex="-1" text="999" parse-escape-sequences="true" display-tooltip-when-elided="true" name="playerScore" style="color: rgb(255, 255, 255); font-size: 35px;" />
+                    <ui:Label tabindex="-1" text="Player Name" parse-escape-sequences="false" display-tooltip-when-elided="false" name="playerName" triple-click-selects-line="false" double-click-selects-word="false" emoji-fallback-support="false" enable-rich-text="false" style="color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 35px;" />
+                    <ui:Label tabindex="-1" text="999" parse-escape-sequences="false" display-tooltip-when-elided="false" name="playerScore" triple-click-selects-line="false" double-click-selects-word="false" emoji-fallback-support="false" enable-rich-text="false" style="color: rgb(255, 255, 255); font-size: 35px;" />
+                    <ui:Label tabindex="-1" text="9" parse-escape-sequences="false" display-tooltip-when-elided="false" name="playerLives" triple-click-selects-line="false" double-click-selects-word="false" emoji-fallback-support="false" enable-rich-text="false" style="color: rgb(255, 255, 255); font-size: 35px;" />
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="playerBContainer" class="playerData_rightToLeft">
-                <ui:VisualElement name="playerAvatar" class="playerAvatar">
-                    <ui:VisualElement name="turnIndicator" class="turnIndicator" />
+                <ui:VisualElement name="playerAvatar">
+                    <ui:VisualElement name="icon" class="playerAvatar" style="flex-grow: 1;">
+                        <ui:VisualElement name="turnIndicator" class="turnIndicator" />
+                    </ui:VisualElement>
+                    <KemothStudios.UI.ProgressBar fill-amount="18.6" name="turnTimer" direction="RIGHT" class="turnTimerBar" />
                 </ui:VisualElement>
                 <ui:VisualElement name="playerDetails" class="playerDetails playerDetails_right">
-                    <ui:Label tabindex="-1" text="Player Name" parse-escape-sequences="true" display-tooltip-when-elided="true" name="playerName" style="color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 35px;" />
-                    <ui:Label tabindex="-1" text="999" parse-escape-sequences="true" display-tooltip-when-elided="true" name="playerScore" style="color: rgb(255, 255, 255); font-size: 35px;" />
+                    <ui:Label tabindex="-1" text="Player Name" parse-escape-sequences="false" display-tooltip-when-elided="false" name="playerName" triple-click-selects-line="false" double-click-selects-word="false" emoji-fallback-support="false" enable-rich-text="false" style="color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 35px;" />
+                    <ui:Label tabindex="-1" text="999" parse-escape-sequences="false" display-tooltip-when-elided="false" name="playerScore" triple-click-selects-line="false" double-click-selects-word="false" emoji-fallback-support="false" enable-rich-text="false" style="color: rgb(255, 255, 255); font-size: 35px;" />
+                    <ui:Label tabindex="-1" text="9" parse-escape-sequences="false" display-tooltip-when-elided="false" name="playerLives" emoji-fallback-support="false" enable-rich-text="false" double-click-selects-word="false" triple-click-selects-line="false" style="color: rgb(255, 255, 255); font-size: 35px;" />
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

@@ -18,7 +18,8 @@ public partial class LabelAutoFit : VisualElement
     [UxmlAttribute]
     public float ratio
     {
-        get => _ratio; set
+        get => _ratio;
+        set
         {
             _ratio = value;
             UpdateFontSize();
@@ -71,5 +72,4 @@ public partial class LabelAutoFit : VisualElement
         if (fontSizeDeltaNormalized > 0.01f)
             _label.style.fontSize = newFontSize < resolvedStyle.fontSize ? newFontSize : resolvedStyle.fontSize;
     }
-
 }
