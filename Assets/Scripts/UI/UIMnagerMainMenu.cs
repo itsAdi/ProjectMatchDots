@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using KemothStudios.Utility;
 using KemothStudios.Utility.Events;
 using UnityEngine;
@@ -23,13 +24,14 @@ namespace KemothStudios
         private int _enabledPlayerAvatarTab; // actually the index to use in _playerAvatarIndices
         private bool _updatingAvatarsView;
         private VisualElement _settingsCog;
+        private ShowMessageEvent _showMessageEvent;
 
         private void Start()
         {
             _playerAName = _uiDoument.rootVisualElement.Q<TextField>("playerAName");
             _playerBName = _uiDoument.rootVisualElement.Q<TextField>("playerBName");
             _startGameButton = _uiDoument.rootVisualElement.Q<Button>("startGameButton");
-            
+
             // Setting up player avatar tabs
             UQueryBuilder<RadioButton> q = _uiDoument.rootVisualElement.Query<RadioButton>("playerIconTab");
             _playerAAvatarTab = q.AtIndex(0);
@@ -52,7 +54,7 @@ namespace KemothStudios
                     EventBus<MinorButtonClickedEvent>.RaiseEvent(new MinorButtonClickedEvent());
                 }
             });
-            
+
             _settingsCog = _uiDoument.rootVisualElement.Q<VisualElement>("settingsCog");
             _settingsCog.RegisterCallback<ClickEvent>(ShowSettings);
 
@@ -71,6 +73,7 @@ namespace KemothStudios
                     {
                         r.Q(className: "unity-radio-button__checkmark-background").style.backgroundImage = new StyleBackground(avatarImage);
                     }
+
                     int index = i;
                     r.RegisterValueChangedCallback(x =>
                     {
@@ -88,6 +91,7 @@ namespace KemothStudios
                     _playerAvatarControls[i] = r;
                     group.Add(r);
                 }
+
                 UpdateAvatarsView();
             }
 
@@ -105,7 +109,7 @@ namespace KemothStudios
             EventBus<ShowSettingsEvent>.RaiseEvent(new ShowSettingsEvent());
             EventBus<MinorButtonClickedEvent>.RaiseEvent(new MinorButtonClickedEvent());
         }
-        
+
         private void UpdateAvatarsView()
         {
             if (_playerAvatarControls != null)
@@ -123,24 +127,38 @@ namespace KemothStudios
 
         private void StartGame()
         {
+            if (Application.isMobilePlatform)
+                StartCoroutine(HideKeyboard());
             EventBus<MajorButtonClickedEvent>.RaiseEvent(new MajorButtonClickedEvent());
-            
             if (string.IsNullOrEmpty(_playerAName.text) || string.IsNullOrEmpty(_playerBName.text))
             {
-                DebugUtility.LogColored("red", "Player names are required");
+                _showMessageEvent.Message = "Player names are required";
+                EventBus<ShowMessageEvent>.RaiseEvent(_showMessageEvent);
                 return;
             }
 
             if (_playerAName.text.Length < 3 || _playerBName.text.Length < 3)
             {
-                DebugUtility.LogColored("red", "Player names must be at least 3 characters");
+                _showMessageEvent.Message = "Player names must be at least 3 characters";
+                EventBus<ShowMessageEvent>.RaiseEvent(_showMessageEvent);
                 return;
             }
+
             Player playerA = new(_playerAName.text, _playerAvatarIndices[0], 0, _gameData);
             Player playerB = new(_playerBName.text, _playerAvatarIndices[1], 1, _gameData);
             _gameData.InitializePlayerData(playerA, playerB);
 
             GameStates.Instance.CurrentState = GameStates.States.GAME;
+        }
+
+        private IEnumerator HideKeyboard()
+        {
+            yield return new WaitForEndOfFrame();
+            _playerAName.Blur();
+            _playerBName.Blur();
+            var k = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default, false, false, false, false);
+            k.active = false;
+            k = null;
         }
     }
 }

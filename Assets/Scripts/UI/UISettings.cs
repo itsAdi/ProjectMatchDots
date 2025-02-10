@@ -86,6 +86,8 @@ namespace KemothStudios
                 _hideSettingsEvent = new EventBinding<HideSettingsEvent>(HideSettings);
                 EventBus<HideSettingsEvent>.RegisterBinding(_hideSettingsEvent);
 
+                _windowBG.pickingMode = PickingMode.Ignore;
+                
                 _isInitialized = true;
             }
             catch (Exception _)
@@ -119,6 +121,7 @@ namespace KemothStudios
         {
             if (IsInitialized)
             {
+                _windowBG.pickingMode = PickingMode.Position;
                 _windowBG.AddToClassList(COMMON_CSS_SHOW_SHORT);
                 _window.AddToClassList("settingsWindowUp");
             }
@@ -128,6 +131,7 @@ namespace KemothStudios
         {
             if (IsInitialized)
             {
+                _windowBG.pickingMode = PickingMode.Ignore;
                 _windowBG.RemoveFromClassList(COMMON_CSS_SHOW_SHORT);
                 _window.RemoveFromClassList("settingsWindowUp");
             }
