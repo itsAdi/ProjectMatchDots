@@ -1,5 +1,4 @@
 using System;
-using KemothStudios.Utility.Events;
 using KemothStudios.Utility.SaveSystem;
 using UnityEngine;
 

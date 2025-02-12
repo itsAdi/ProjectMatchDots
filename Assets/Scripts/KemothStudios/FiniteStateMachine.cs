@@ -7,27 +7,49 @@ namespace KemothStudios.Utility.States
     public sealed class FiniteStateMachine
     {
         private StateNode _currentStateNode;
-        private Dictionary<Type, StateNode> _stateNodes = new ();
+        private Dictionary<Type, StateNode> _stateNodes = new();
+        private List<ITransition> _anyTransitions = new List<ITransition>();
+        private bool _enabled;
+
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set
+            {
+                if (_currentStateNode != null)
+                    _enabled = value;
+                else DebugUtility.LogWarning($"FiniteStateMachine do not have any state to update, call <b>{nameof(Initialize)}</b> at-least once after creating a {nameof(FiniteStateMachine)}.");
+            }
+        }
 
         public void Update()
         {
-            if (_currentStateNode != null)
+            if(!Enabled) return;
+            foreach (ITransition anyTransition in _anyTransitions)
             {
-                if (_currentStateNode.TryGetTransition(out ITransition transition))
-                    ChangeState(transition);
-                _currentStateNode.State.Update();
-            }else DebugUtility.LogWarning($"FiniteStateMachine do not have any state to update, call <b>{nameof(ChangeState)}</b> at-least once after create a {nameof(FiniteStateMachine)}.");
+                if (anyTransition.Predicate.Evaluate())
+                {
+                    ChangeState(anyTransition);
+                    return;
+                }
+            }
+
+            if (_currentStateNode.TryGetTransition(out ITransition transition))
+                ChangeState(transition);
+            _currentStateNode.State.Update();
         }
 
-        public void SetState(IState state)
+        public void Initialize(IState state)
         {
+            if(_currentStateNode != null) DebugUtility.LogColored("yellow", $"Calling {nameof(Initialize)} while {nameof(FiniteStateMachine)} already started. Generally this method should only be called once after creating a new instance of {nameof(FiniteStateMachine)}.");
             _currentStateNode = AddOrGetStateNode(state);
             _currentStateNode.State.Enter();
+            Enabled = true;
         }
-        
+
         private void ChangeState(ITransition transition)
         {
-            if(_currentStateNode.State == transition.ToState) return;
+            if (_currentStateNode.State == transition.ToState) return;
             _currentStateNode.State.Exit();
             _currentStateNode = _stateNodes[transition.ToState.GetType()];
             _currentStateNode.State.Enter();
@@ -36,6 +58,11 @@ namespace KemothStudios.Utility.States
         public void AddTransition(IState fromState, IState toState, IPredicate condition)
         {
             AddOrGetStateNode(fromState).AddTransition(AddOrGetStateNode(toState).State, condition);
+        }
+
+        public void AddAnyTransition(IState toState, IPredicate condition)
+        {
+            _anyTransitions.Add(new Transition(AddOrGetStateNode(toState).State, condition));
         }
 
         private StateNode AddOrGetStateNode(IState state)
@@ -123,22 +150,23 @@ namespace KemothStudios.Utility.States
         IPredicate Predicate { get; }
     }
 
-    public sealed class FuncPredicate : IPredicate
+    public sealed class FuncPredicate : TriggerBase
     {
-        private readonly Func<bool> _condition;
+        private Func<bool> _condition;
 
         public FuncPredicate([DisallowNull] Func<bool> condition) => _condition = condition;
 
-        public bool Evaluate()
+        public override bool Evaluate()
         {
             return _condition();
         }
     }
 
-    public sealed class TriggerPredicate : IPredicate
+    public sealed class TriggerPredicate : TriggerBase
     {
         private bool _isTriggerOn;
-        public bool Evaluate()
+
+        public override bool Evaluate()
         {
             bool result = _isTriggerOn;
             _isTriggerOn = false;
@@ -146,6 +174,11 @@ namespace KemothStudios.Utility.States
         }
 
         public void EnableTrigger() => _isTriggerOn = true;
+    }
+
+    public abstract class TriggerBase : IPredicate
+    {
+        public abstract bool Evaluate();
     }
 
     public interface IPredicate

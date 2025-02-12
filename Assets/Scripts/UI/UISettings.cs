@@ -38,8 +38,8 @@ namespace KemothStudios
                 Assert(() => _audioData != null, "Audio data is not assigned");
                 Assert(() => _settingsUIAsset != null, "Settings UI asset is not assigned");
                 TemplateContainer root = _settingsUIAsset.Instantiate();
-                _windowBG = root.GetVisualElement("bg", "Unable to create UI bg element");
-                _window = root.GetVisualElement("settingsWindow", "Unable to create UI window element");
+                _windowBG = root.LookFor("bg", "Unable to create UI bg element");
+                _window = root.LookFor("settingsWindow", "Unable to create UI window element");
 
                 // because we will instantiate and extract first child from root and move them to parent, this will not fire any event so we
                 // are using scheduler to add required classes after one frame
@@ -58,21 +58,21 @@ namespace KemothStudios
                     _uiDocumment.rootVisualElement.styleSheets.Add(styleSheetSet[i]);
                 }
 
-                _closeSettingsButton = root.GetVisualElement("done", "Visual element named done is not found in settings UI").GetVisualElement<Button>("No button found inside visual element named done");
+                _closeSettingsButton = root.LookFor("done", "Visual element named done is not found in settings UI").LookFor<Button>("No button found inside visual element named done");
                 _closeSettingsButton.clicked += RequestToHideSettings;
 
-                VisualElement bgMusic = root.GetVisualElement("bgMusic", "Visual element named bgMusic is not found in settings UI");
-                VisualElement uiSound = root.GetVisualElement("uiSound", "Visual element named uiSound is not found in settings UI");
+                VisualElement bgMusic = root.LookFor("bgMusic", "Visual element named bgMusic is not found in settings UI");
+                VisualElement uiSound = root.LookFor("uiSound", "Visual element named uiSound is not found in settings UI");
 
-                _gameAudioMuteToggle = bgMusic.GetVisualElement<Toggle>("Game audio mute toggle isn not fount");
-                _uiAudioMuteToggle = uiSound.GetVisualElement<Toggle>("UI audio mute toggle is not fount");
+                _gameAudioMuteToggle = bgMusic.LookFor<Toggle>("Game audio mute toggle isn not fount");
+                _uiAudioMuteToggle = uiSound.LookFor<Toggle>("UI audio mute toggle is not fount");
                 _gameAudioMuteToggle.SetValueWithoutNotify(Mathf.Approximately(_audioData.GameAudioVolume, 0f));
                 _uiAudioMuteToggle.SetValueWithoutNotify(Mathf.Approximately(_audioData.UIAudioVolume, 0f));
                 _gameAudioMuteToggle.RegisterValueChangedCallback(GameAudioMuteStateChanged);
                 _uiAudioMuteToggle.RegisterValueChangedCallback(UIAudioMuteStateChanged);
 
-                _gameAudioVolumeSlider = bgMusic.GetVisualElement<Slider>("Game audio volume slider is not found");
-                _uiAudioVolumeSlider = uiSound.GetVisualElement<Slider>("UI audio volume slider is not found");
+                _gameAudioVolumeSlider = bgMusic.LookFor<Slider>("Game audio volume slider is not found");
+                _uiAudioVolumeSlider = uiSound.LookFor<Slider>("UI audio volume slider is not found");
                 _gameAudioVolumeSlider.SetValueWithoutNotify(_audioData.GameAudioVolume);
                 _uiAudioVolumeSlider.SetValueWithoutNotify(_audioData.UIAudioVolume);
                 _gameAudioVolumeSlider.RegisterValueChangedCallback(GameAudioVolumeChanged);

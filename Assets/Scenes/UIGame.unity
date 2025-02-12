@@ -231,6 +231,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1836485645}
   - component: {fileID: 1836485644}
+  - component: {fileID: 1836485646}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -256,7 +257,6 @@ MonoBehaviour:
   _playerAvatarsSO: {fileID: 11400000, guid: 97b7c35a0e9122044a760ad1e07097fe, type: 2}
   _boardDataSO: {fileID: 11400000, guid: d2d1d0d8be2a55d448e8db404535a729, type: 2}
   _gameResultUIShowDelay: 2
-  _cellOwnerIconAsset: {fileID: 9197481963319205126, guid: d80c51181f067504a9c4663061a9aa5c, type: 3}
 --- !u!4 &1836485645
 Transform:
   m_ObjectHideFlags: 0
@@ -272,6 +272,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1836485646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836485642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50419a3cf3c5e1d3498e6b9d5a454afe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerLivesConfig: {fileID: 11400000, guid: 862273080bd028e6c9171422711a88e0, type: 2}
+  _uiDocument: {fileID: 1257722661}
+  _gameData: {fileID: 11400000, guid: 99e2d00b450b4ed4483bd8baea2c3fc6, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

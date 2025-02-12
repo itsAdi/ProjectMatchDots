@@ -17,7 +17,7 @@ namespace KemothStudios
         private void Start()
         {
             Statics.Assert(()=>_uiDocument != null, "UI Document for loading screen is null");
-            _loadingScreenVisualElement = _uiDocument.rootVisualElement.GetVisualElement("background", "Background object for loading screen not found");
+            _loadingScreenVisualElement = _uiDocument.rootVisualElement.LookFor("background", "Background object for loading screen not found");
             _loadingScreenVisualElement.AddToClassList(Statics.COMMON_CSS_HIDE_LONG);
             _loadingScreenVisualElement.AddToClassList(Statics.COMMON_CSS_SHOW_LONG);
             _showLoadingScreenBinding = new EventBinding<ShowLoadingScreenEvent>(ShowLoadingScreen);

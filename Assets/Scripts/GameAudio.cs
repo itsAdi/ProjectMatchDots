@@ -22,6 +22,7 @@ namespace KemothStudios
         [SerializeField] private AudioClip _avatarSelection;
         [SerializeField] private AudioClip _drawLine;
         [SerializeField] private AudioClip _victory;
+        [SerializeField] private AudioClip _timerUp;
         [SerializeField] private AudioClip[] _cellsCompleted;
 
         private EventBinding<MajorButtonClickedEvent> _majorButtonClickEventBinding;
@@ -35,6 +36,7 @@ namespace KemothStudios
         private EventBinding<UIAudioVolumeChangedEvent> _uiAudioVolumeChangedEventBinding;
         private EventBinding<GameAudioMuteChangedEvent> _gameAudioMuteChangedEventBinding;
         private EventBinding<UIAudioMuteChangedEvent> _uiAudioMuteChangedEventBinding;
+        private EventBinding<TurnTimerElapsedEvent> _turnTimerElapsedEventBinding;
 
         private int _cellsCompletedClipsCount;
         private FileDataService<AudioData, JSONSerializer<AudioData>> _audioDataFileService;
@@ -68,6 +70,9 @@ namespace KemothStudios
             _uiAudioVolumeChangedEventBinding = new EventBinding<UIAudioVolumeChangedEvent>(UpdateUIAudioVolume);
             EventBus<UIAudioVolumeChangedEvent>.RegisterBinding(_uiAudioVolumeChangedEventBinding);
 
+            _turnTimerElapsedEventBinding = new EventBinding<TurnTimerElapsedEvent>(TurnTimerElapsed);
+            EventBus<TurnTimerElapsedEvent>.RegisterBinding(_turnTimerElapsedEventBinding);
+
             _cellsCompletedClipsCount = _cellsCompleted.Length;
             if (_cellsCompletedClipsCount == 0)
                 DebugUtility.LogColored("yellow", "No Draw-Line audio clips provided");
@@ -95,7 +100,7 @@ namespace KemothStudios
             _uiAudio.volume = _audioData.UIAudioVolume;
             _gameAudio.Play();
         }
-
+        
         private void OnDestroy()
         {
             EventBus<MajorButtonClickedEvent>.UnregisterBinding(_majorButtonClickEventBinding);
@@ -110,6 +115,7 @@ namespace KemothStudios
             EventBus<GameAudioVolumeChangedEvent>.UnregisterBinding(_gameAudioVolumeChangedEventBinding);
             EventBus<UIAudioMuteChangedEvent>.UnregisterBinding(_uiAudioMuteChangedEventBinding);
             EventBus<UIAudioVolumeChangedEvent>.UnregisterBinding(_uiAudioVolumeChangedEventBinding);
+            EventBus<TurnTimerElapsedEvent>.UnregisterBinding(_turnTimerElapsedEventBinding);
         }
 
         private void SaveAudioData()
@@ -123,7 +129,8 @@ namespace KemothStudios
             if (cell.MoveNext() && cell.Current != null && !cell.Current.IsCellCompleted)
                 PlayUIAudioClip(_drawLine);
         }
-
+        
+        private void TurnTimerElapsed() => PlayUIAudioClip(_timerUp);
         private void UpdateGameAudioVolume(GameAudioVolumeChangedEvent value) => _gameAudio.volume = value.Volume;
         private void UpdateUIAudioVolume(UIAudioVolumeChangedEvent value) => _uiAudio.volume = value.Volume;
         private void UpdateGameAudioMuteState(GameAudioMuteChangedEvent value) => _gameAudio.volume = _audioData.GameAudioVolume;

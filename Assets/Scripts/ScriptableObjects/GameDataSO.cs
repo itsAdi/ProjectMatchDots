@@ -51,11 +51,34 @@ namespace KemothStudios
             return false;
         }
 
+        public bool TryGetPlayerLives(int playerIndex, out int lives)
+        {
+            if (playerIndex >= 0 && playerIndex < _playerCount)
+            {
+                lives = _players[playerIndex].RemainingLivesLocal;
+                return true;
+            }
+            lives = -1;
+            return false;
+        }
+
+        public bool TrySetPlayerLives(int playerIndex, int lives)
+        {
+            if (playerIndex >= 0 && playerIndex < _playerCount)
+            {
+                Player p = _players[playerIndex];
+                p.RemainingLivesLocal = lives;
+                _players[playerIndex] = p;
+                return true;
+            }
+            return false;
+        }
+        
         public bool TryGetPlayerScore(int playerIndex, out int score)
         {
             if (playerIndex >= 0 && playerIndex < _playerCount)
             {
-                score = _players[playerIndex].GetScoreLocal;
+                score = _players[playerIndex].ScoreLocal;
                 return true;
             }
             score = -1;
@@ -67,7 +90,7 @@ namespace KemothStudios
             if (playerIndex >= 0 && playerIndex < _playerCount)
             {
                 Player p = _players[playerIndex];
-                p.SetScore(score);
+                p.ScoreLocal = score;
                 _players[playerIndex] = p;
                 return true;
             }
@@ -77,12 +100,13 @@ namespace KemothStudios
 
     public struct Player
     {
-        public string Name { get; private set; }
-        public int AvatarIndex { get; private set; }
-        public int PlayerIndex { get; private set; }
+        public string Name { get; }
+        public int AvatarIndex { get; }
+        public int PlayerIndex { get; }
         
         private GameDataSO _gameDataSO;
         private int _score;
+        private int _remainingLives;
 
         public Player(string name, int avatarIndex, int playerIndex, GameDataSO gameData)
         {
@@ -91,9 +115,18 @@ namespace KemothStudios
             PlayerIndex = playerIndex;
             _gameDataSO = gameData;
             _score = 0;
+            _remainingLives = 0;
         }
         
-        public void SetScore(int score) => _score = score;
+        public int GetRemainingLives {
+            get
+            {
+                if (!_gameDataSO.TryGetPlayerLives(PlayerIndex, out var lives))
+                    DebugUtility.LogError($"Failed to get remaining lives for player on index {PlayerIndex}");
+                return lives;
+            }
+        }
+        
         public int GetScore {
             get
             {
@@ -102,10 +135,25 @@ namespace KemothStudios
                 return score;
             }
         }
+
+        /// <summary>
+        /// <para>Used by <b>GameDataSO</b> to get and set score</para>
+        /// <para>To get score either use <see cref="GetScore"/> or <see cref="GameDataSO.TryGetPlayerScore"/> and to set score only use <see cref="GameDataSO.TrySetPlayerScore"/></para>
+        /// </summary>
+        public int ScoreLocal
+        {
+            get => _score;
+            set => _score = value;
+        }
         
         /// <summary>
-        /// Should only be used from GameDataSO
+        /// <para>Used by <b>GameDataSO</b> to get and set remaining lives</para>
+        /// <para>To get remaining lives either use <see cref="GetRemainingLives"/> or <see cref="GameDataSO.TryGetPlayerLives"/> and to set remaining lives only use <see cref="GameDataSO.TrySetPlayerLives"/></para>
         /// </summary>
-        public int GetScoreLocal => _score;
+        public int RemainingLivesLocal
+        {
+            get => _remainingLives;
+            set => _remainingLives = value;
+        }
     }
 }

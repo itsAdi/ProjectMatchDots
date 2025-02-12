@@ -36,5 +36,11 @@ namespace KemothStudios
             if(condition()) return;
             throw new NullReferenceException(message);
         }
+        
+        public static void Assert(bool condition, string message)
+        {
+            if(condition) return;
+            throw new NullReferenceException(message);
+        }
     }
 }

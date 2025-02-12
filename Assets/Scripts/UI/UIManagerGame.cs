@@ -68,15 +68,15 @@ namespace KemothStudios.UI
             EventBus<TurnEndedEvent>.RegisterBinding(_turnEnded);
 
             // Setup Game Result UI ...
-            _gameResultUI = _gameResultUIDocument.rootVisualElement.GetVisualElement("gameResultUI", "gameResultUI not found in game result UI document");
-            _gameResultUIPlayerName = _gameResultUI.GetVisualElement<LabelAutoFit>("playerName", "playerName not found in game result UI");
-            _gameResultUIPlayerScore = _gameResultUI.GetVisualElement<LabelAutoFit>("playerScore", "playerScore not found in game result UI");
-            _gameResultUIPlayerAvatar = _gameResultUI.GetVisualElement<VisualElement>("playerAvatar", "playerAvatar not found in game result UI");
-            _gameResultUIHomeButton = _gameResultUI.GetVisualElement<Button>("HomeButton", "homeButton not found in game result UI");
-            _gameResultUIRestartButton = _gameResultUI.GetVisualElement<Button>("restartButton", "restartButton not found in game result UI");
+            _gameResultUI = _gameResultUIDocument.rootVisualElement.LookFor("gameResultUI", "gameResultUI not found in game result UI document");
+            _gameResultUIPlayerName = _gameResultUI.LookFor<LabelAutoFit>("playerName", "playerName not found in game result UI");
+            _gameResultUIPlayerScore = _gameResultUI.LookFor<LabelAutoFit>("playerScore", "playerScore not found in game result UI");
+            _gameResultUIPlayerAvatar = _gameResultUI.LookFor<VisualElement>("playerAvatar", "playerAvatar not found in game result UI");
+            _gameResultUIHomeButton = _gameResultUI.LookFor<Button>("HomeButton", "homeButton not found in game result UI");
+            _gameResultUIRestartButton = _gameResultUI.LookFor<Button>("restartButton", "restartButton not found in game result UI");
 
             // Setup Cell Owner Avatars UI ...
-            VisualElement elem = _uiDocument.rootVisualElement.GetVisualElement<VisualElement>("cellOwnerAvatarContainer", "cellOwnerAvatarContainer not found in UIDocument root");
+            VisualElement elem = _uiDocument.rootVisualElement.LookFor<VisualElement>("cellOwnerAvatarContainer", "cellOwnerAvatarContainer not found in UIDocument root");
             Rect r = _boardDataSO.GetCell(0).CellTransform;
             Vector2 min = Camera.main.WorldToViewportPoint(new Vector2(r.min.x, r.max.y));
             r = _boardDataSO.GetCell(_boardDataSO.TotalCellsCount - 1).CellTransform;
@@ -209,6 +209,7 @@ namespace KemothStudios.UI
 
             private VisualElement _turnIndicator;
             private bool _turnIndicatorActive;
+            private bool _isInitialized;
 
             // Saving callback here because RegisterCallback//UnRegisterCallback methods saves a reference to the method
             // we are using a struct and structs are not reference types, so after registering we would not be able
@@ -218,16 +219,19 @@ namespace KemothStudios.UI
             public UIData(UIDocument iuDocument, string containerName)
             {
                 VisualElement container = iuDocument.rootVisualElement.Q<VisualElement>(containerName);
-                PlayerAvatar = container.Q<VisualElement>("playerAvatar");
-                PlayerName = container.Q<Label>("playerName");
-                PlayerScore = container.Q<Label>("playerScore");
-                _turnIndicator = PlayerAvatar.Q<VisualElement>("turnIndicator");
+                PlayerAvatar = container.LookFor("icon", "Failed to get player avatar icon");
+                PlayerName = container.LookFor<Label>("playerName", "Failed to get player name");
+                PlayerScore = container.LookFor<Label>("playerScore", "Failed to get player score");
+                _turnIndicator = PlayerAvatar.LookFor("turnIndicator", "Failed to get turn indicator");
                 _turnIndicatorActive = false;
                 _callback = null;
+                _isInitialized = true;
             }
 
             public void ShowTurnIndicator()
             {
+                bool i = _isInitialized;
+                Statics.Assert(()=>i, "Cannot show turn indicator because UIData is not initialized");
                 if (_turnIndicatorActive) return;
                 _turnIndicatorActive = true;
                 if (_callback == null)
@@ -238,6 +242,8 @@ namespace KemothStudios.UI
 
             public void HideTurnIndicator()
             {
+                bool i = _isInitialized;
+                Statics.Assert(()=>i, "Cannot hide turn indicator because UIData is not initialized");
                 if (!_turnIndicatorActive) return;
                 _turnIndicatorActive = false;
                 if (_callback != null)
@@ -249,6 +255,8 @@ namespace KemothStudios.UI
 
             private void ToggleTurnIndicatorAnimation(TransitionEndEvent _)
             {
+                bool i = _isInitialized;
+                Statics.Assert(()=>i, "Cannot toggle turn indicator because UIData is not initialized");
                 _turnIndicator.ToggleInClassList("turnIndicatorShow");
             }
         }

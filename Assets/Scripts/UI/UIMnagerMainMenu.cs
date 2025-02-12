@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using KemothStudios.Utility;
 using KemothStudios.Utility.Events;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -156,9 +154,12 @@ namespace KemothStudios
             yield return new WaitForEndOfFrame();
             _playerAName.Blur();
             _playerBName.Blur();
-            var k = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default, false, false, false, false);
-            k.active = false;
-            k = null;
+            if (TouchScreenKeyboard.visible)
+            {
+                var k = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default, false, false, false, false);
+                k.active = false;
+                k = null;
+            }
         }
     }
 }
