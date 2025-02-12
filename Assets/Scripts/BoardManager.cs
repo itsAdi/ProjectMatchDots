@@ -21,38 +21,44 @@ namespace KemothStudios.Board
         [SerializeField] private BoardDataSO _boardData;
 
         private EventBinding<DrawLineEvent> _drawLineEvent;
+        private EventBinding<PlayerWonEvent> _playerWonEvent;
         private EventBinding<GameStartedEvent> _startGameEvent;
-        private EventBinding<CellAcquireCompletedEvent> _cellAcquireCompletedEvent;
+        private EventBinding<CellAcquireCompletedEvent> _gameResultCheckedEvent;
         private FiniteStateMachine _boardStateMachine;
         private TriggerPredicate _enableInputTrigger = new(), _cellAcquireTrigger = new(), _gameOverTrigger = new();
         private BoardStateAcquiringCell.StateData _cellAcquireStateData;
         private EventBinding<SceneLoadingCompleteEvent> _sceneLoadComplete;
 
-        private Color _originalCameraBakcgroundColor;
+        private Color _originalCameraBackGroundColor;
 
         void Start()
         {
             _cellAcquireStateData = new BoardStateAcquiringCell.StateData(_cellCompletionDelay);
             _boardStateMachine = new FiniteStateMachine();
-            _boardStateMachine.AddTransition(new BoardStateAcquiringCell(_cellAcquireStateData), new BoardStateIdle(), _gameOverTrigger);
+            _boardStateMachine.AddAnyTransition(new BoardStateIdle(), _gameOverTrigger);
             _boardStateMachine.AddTransition(new BoardStateIdle(), new BoardStateTakeInput(_boardData), _enableInputTrigger);
             _boardStateMachine.AddTransition(new BoardStateAcquiringCell(_cellAcquireStateData), new BoardStateTakeInput(_boardData), _enableInputTrigger);
             _boardStateMachine.AddTransition(new BoardStateTakeInput(_boardData), new BoardStateAcquiringCell(_cellAcquireStateData), _cellAcquireTrigger);
-            _boardStateMachine.SetState(new BoardStateIdle());
+            _boardStateMachine.Initialize(new BoardStateIdle());
+
             _drawLineEvent = new EventBinding<DrawLineEvent>(CheckForCompletedCells);
             EventBus<DrawLineEvent>.RegisterBinding(_drawLineEvent);
-            _startGameEvent = new EventBinding<GameStartedEvent>(() => { _enableInputTrigger.EnableTrigger(); });
+            _startGameEvent = new EventBinding<GameStartedEvent>(_enableInputTrigger.EnableTrigger);
             EventBus<GameStartedEvent>.RegisterBinding(_startGameEvent);
             _sceneLoadComplete = new EventBinding<SceneLoadingCompleteEvent>(StartGame);
             EventBus<SceneLoadingCompleteEvent>.RegisterBinding(_sceneLoadComplete);
-            _cellAcquireCompletedEvent = new EventBinding<CellAcquireCompletedEvent>(() =>
+            _gameResultCheckedEvent = new EventBinding<CellAcquireCompletedEvent>(() =>
             {
                 if (_boardData.CompletedCellsCount != _boardData.TotalCellsCount)
                     _enableInputTrigger.EnableTrigger();
-                else _gameOverTrigger.EnableTrigger();
+                else
+                    _gameOverTrigger.EnableTrigger();
             });
-            EventBus<CellAcquireCompletedEvent>.RegisterBinding(_cellAcquireCompletedEvent);
-            _originalCameraBakcgroundColor = Camera.main.backgroundColor;
+            EventBus<CellAcquireCompletedEvent>.RegisterBinding(_gameResultCheckedEvent);
+            _playerWonEvent = new EventBinding<PlayerWonEvent>(GameOver);
+            EventBus<PlayerWonEvent>.RegisterBinding(_playerWonEvent);
+
+            _originalCameraBackGroundColor = Camera.main.backgroundColor;
             Camera.main.backgroundColor = _boardSceneColor;
         }
 
@@ -63,19 +69,25 @@ namespace KemothStudios.Board
 
         private void OnDestroy()
         {
-            if(Camera.main != null) Camera.main.backgroundColor = _originalCameraBakcgroundColor;
+            if (Camera.main != null) Camera.main.backgroundColor = _originalCameraBackGroundColor;
             EventBus<DrawLineEvent>.UnregisterBinding(_drawLineEvent);
+            EventBus<PlayerWonEvent>.UnregisterBinding(_playerWonEvent);
             EventBus<GameStartedEvent>.UnregisterBinding(_startGameEvent);
-            EventBus<CellAcquireCompletedEvent>.UnregisterBinding(_cellAcquireCompletedEvent);
             EventBus<SceneLoadingCompleteEvent>.UnregisterBinding(_sceneLoadComplete);
+            EventBus<CellAcquireCompletedEvent>.UnregisterBinding(_gameResultCheckedEvent);
         }
 
         private void StartGame()
         {
-            if(GameStates.Instance.CurrentState == GameStates.States.GAME)
+            if (GameStates.Instance.CurrentState == GameStates.States.GAME)
                 EventBus<GameStartedEvent>.RaiseEvent(new GameStartedEvent());
         }
-        
+
+        private void GameOver()
+        {
+            _boardStateMachine.Enabled = false;
+        }
+
         private void CheckForCompletedCells(DrawLineEvent lineData)
         {
             List<Cell> completedCells = new();

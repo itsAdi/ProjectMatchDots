@@ -53,6 +53,7 @@
     width: 200px;
     height: 200px;
     background-image: url("project://database/Assets/Sprites/Pic1.jpg?fileID=21300000&guid=db4054a3edfa5d34fa5c551920da2fe7&type=3#Pic1");
+    overflow: hidden;
 }
 
 .turnIndicatorShow {

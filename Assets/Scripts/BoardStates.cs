@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using KemothStudios.Board;
+using KemothStudios.Utility;
 using KemothStudios.Utility.Events;
 using KemothStudios.Utility.States;
 using UnityEngine;

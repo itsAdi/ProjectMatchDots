@@ -156,6 +156,7 @@ MonoBehaviour:
   _avatarSelection: {fileID: 8300000, guid: 8e58a31b7c58fd7ca89a9150ceafc875, type: 3}
   _drawLine: {fileID: 8300000, guid: ce272b7e491be72d8b2b25a528bc9372, type: 3}
   _victory: {fileID: 8300000, guid: 26b716618fc13611ca4c584af702e6dc, type: 3}
+  _timerUp: {fileID: 8300000, guid: bee6a0ad894092c9c8c59bf88aa3370d, type: 3}
   _cellsCompleted:
   - {fileID: 8300000, guid: df64ab6b7f245b6339b89e204eaaa52c, type: 3}
   - {fileID: 8300000, guid: 0ed7024c58c64d0e0914294b09b7bb2b, type: 3}

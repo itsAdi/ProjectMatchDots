@@ -16,6 +16,8 @@
 [Aa]ssets/ExternalDependencyManager/
 [Aa]ssets/Editor Default Resources/Firebase/
 [Aa]ssets/Plugins/Android/Firebase*/
+[Aa]ssets/Plugins/iOS/Firebase*/
+[Aa]ssets/Plugins/tvOS/Firebase*/
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
 
@@ -86,3 +88,5 @@ Assets/ExternalDependencyManager.meta
 Assets/Firebase.meta
 
 Assets/Plugins/Android/*Firebase*
+Assets/Plugins/iOS/*Firebase*
+Assets/Plugins/tvOS/*Firebase*

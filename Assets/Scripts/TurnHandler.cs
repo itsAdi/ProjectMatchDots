@@ -14,7 +14,7 @@ namespace KemothStudios
         private int _currentPlayerIndex;
         private EventBinding<CellAcquireCompletedEvent> _cellAcquireCompleted;
         private EventBinding<GameStartedEvent> _gameStarted;
-        private EventBinding<BoardReadyAfterDrawLineEvent> _boardReadyAfterDrawLine;
+        private EventBinding<GameResultCheckedEvent> _gameResultChecked;
         private EventBinding<PlayerWonEvent> _playerWon;
         private bool _canChangeTurn;
 
@@ -22,12 +22,16 @@ namespace KemothStudios
         {
             LastPlayer = default;
             _canChangeTurn = true;
+            
             _cellAcquireCompleted = new EventBinding<CellAcquireCompletedEvent>(DisableTurnChange);
             EventBus<CellAcquireCompletedEvent>.RegisterBinding(_cellAcquireCompleted);
-            _boardReadyAfterDrawLine = new EventBinding<BoardReadyAfterDrawLineEvent>(ChangeTurn);
-            EventBus<BoardReadyAfterDrawLineEvent>.RegisterBinding(_boardReadyAfterDrawLine);
+            
+            _gameResultChecked = new EventBinding<GameResultCheckedEvent>(ChangeTurn);
+            EventBus<GameResultCheckedEvent>.RegisterBinding(_gameResultChecked);
+            
             _gameStarted = new EventBinding<GameStartedEvent>(StartGame);
             EventBus<GameStartedEvent>.RegisterBinding(_gameStarted);
+            
             _playerWon = new EventBinding<PlayerWonEvent>(EndCurrentPlayerTurnOnGameOver);
             EventBus<PlayerWonEvent>.RegisterBinding(_playerWon);
         }
@@ -39,14 +43,18 @@ namespace KemothStudios
             LastPlayer = default;
             _currentPlayerIndex = 0;
             EventBus<CellAcquireCompletedEvent>.UnregisterBinding(_cellAcquireCompleted);
-            EventBus<BoardReadyAfterDrawLineEvent>.UnregisterBinding(_boardReadyAfterDrawLine);
+            EventBus<GameResultCheckedEvent>.UnregisterBinding(_gameResultChecked);
             EventBus<GameStartedEvent>.UnregisterBinding(_gameStarted);
             EventBus<PlayerWonEvent>.UnregisterBinding(_playerWon);
         }
 
-        private void EndCurrentPlayerTurnOnGameOver(PlayerWonEvent obj) => EventBus<TurnEndedEvent>.RaiseEvent(new TurnEndedEvent(obj.WinnerPlayer));
+        private void EndCurrentPlayerTurnOnGameOver() => EventBus<TurnEndedEvent>.RaiseEvent(new TurnEndedEvent(CurrentPlayer));
         private void StartGame() => RaiseTurnStartEvent(0);
-        private void DisableTurnChange() => _canChangeTurn = false;
+
+        private void DisableTurnChange()
+        {
+            _canChangeTurn = false;
+        }
 
         private void ChangeTurn()
         {

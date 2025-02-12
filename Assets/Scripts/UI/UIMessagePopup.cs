@@ -25,9 +25,9 @@ namespace KemothStudios
             EventBus<ShowMessageEvent>.RegisterBinding(_messageBinding);
             EventBus<HideMessageEvent>.RegisterBinding(_hideBinding);
             Statics.Assert(()=>_uiDocument != null, "UI Document for message popup is null");
-            _popup = _uiDocument.rootVisualElement.GetVisualElement("windowContainer", "Message popup window container not found");
-            _messageText = _popup.GetVisualElement<Label>("messageText", "Text object for message popup not found");
-            _hidePopupButton = _popup.GetVisualElement("responseButton", "Response button container not found").GetVisualElement<Button>("Button object for response button not found");
+            _popup = _uiDocument.rootVisualElement.LookFor("windowContainer", "Message popup window container not found");
+            _messageText = _popup.LookFor<Label>("messageText", "Text object for message popup not found");
+            _hidePopupButton = _popup.LookFor("responseButton", "Response button container not found").LookFor<Button>("Button object for response button not found");
             _popup.AddToClassList("show");
             _popup.AddToClassList("hide");
             _uiDocument.rootVisualElement.pickingMode = PickingMode.Ignore;

@@ -160,6 +160,7 @@ namespace KemothStudios
     public struct ShowMessageEvent : IEvent
     {
         public string Message {get; set;}
+        public ShowMessageEvent(string message) => Message = message;
     }
     
     /// <summary>
@@ -181,4 +182,14 @@ namespace KemothStudios
     /// Called when transition of loading screen is completed when either showing it or hiding it
     /// </summary>
     public struct LoadingScreenTransitionCompleteEvent : IEvent {}
+    
+    /// <summary>
+    /// Called when turn timer has been elapsed
+    /// </summary>
+    public struct TurnTimerElapsedEvent : IEvent {}
+    
+    /// <summary>
+    /// Called when <see cref="GameResultManager"/> checked for result but there is no winner found
+    /// </summary>
+    public struct GameResultCheckedEvent : IEvent {}
 }

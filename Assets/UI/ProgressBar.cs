@@ -1,9 +1,10 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace KemothStudios.UI
 {
-    [UxmlElement]
+    [UxmlElement, Serializable]
     public partial class ProgressBar : VisualElement
     {
         public enum FillDirection
