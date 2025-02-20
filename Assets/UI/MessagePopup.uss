@@ -1,9 +1,4 @@
 #window {
-    background-color: rgb(255, 255, 255);
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
     padding-top: 50px;
     padding-right: 50px;
     padding-bottom: 20px;
@@ -12,6 +7,7 @@
     margin-left: 15px;
     margin-bottom: 15px;
     margin-top: 15px;
+    background-image: url("project://database/Assets/Sprites/KenneyUI/Grey/Double/button_square_depth_flat.png?fileID=21300000&guid=0d1fe2899199bb1b5b92d9f512cea684&type=3#button_square_depth_flat");
 }
 
 .show {

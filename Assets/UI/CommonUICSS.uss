@@ -1,18 +1,15 @@
-.fitScreen {
-    flex-grow: 1;
+:root {
+    --dark-text: rgb(62, 62, 62);
+    --light-text: rgb(255, 255, 255);
+    --major-font: url("project://database/Assets/Fonts/Outfit-Regular.ttf?fileID=12800000&guid=f193f5b2e8c226074b86260a4789984b&type=3#Outfit-Regular");
+    --major-font-letter-spacing: -3px;
+    --large-text-size: 65px;
+    --small-text-size: 45px;
+    --mini-text-size: 35px;
 }
 
-.majorButton {
-    font-size: 95px;
-    background-color: rgb(154, 65, 0);
-    border-top-width: 0;
-    border-right-width: 0;
-    border-bottom-width: 0;
-    border-left-width: 0;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
+.fitScreen {
+    flex-grow: 1;
 }
 
 .hideLong {
@@ -25,20 +22,6 @@
     transition-duration: 1s;
     transition-property: opacity;
     opacity: 0;
-}
-
-.minorButton {
-    font-size: 35px;
-    background-color: rgb(154, 65, 0);
-    border-top-width: 0;
-    border-right-width: 0;
-    border-bottom-width: 0;
-    border-left-width: 0;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    flex-grow: 1;
 }
 
 .hideShort {
@@ -63,4 +46,146 @@
     transition-duration: 0.5s;
     transition-property: opacity;
     opacity: 1;
+}
+
+.unity-button-override {
+    background-color: rgba(0, 0, 0, 0);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.buttonBGBlueDepthBorder {
+    -unity-font-definition: var(--major-font);
+    color: var(--dark-text);
+    font-size: var(--small-text-size);
+    -unity-font-style: bold;
+    letter-spacing: var(--major-font-letter-spacing);
+    background-image: url("project://database/Assets/Sprites/KenneyUI/Blue/Double/button_rectangle_depth_border.png?fileID=21300000&guid=e732ed335c023e6d2bd4466877e0fee2&type=3#button_rectangle_depth_border");
+    padding-bottom: 8px;
+}
+
+.buttonBGBlueDepth {
+    -unity-font-definition: var(--major-font);
+    color: var(--light-text);
+    font-size: var(--small-text-size);
+    -unity-font-style: bold;
+    letter-spacing: var(--major-font-letter-spacing);
+    background-image: url("project://database/Assets/Sprites/KenneyUI/Blue/Double/button_rectangle_depth_flat.png?fileID=21300000&guid=70d18ece75de2c3208d3f678c6705a1d&type=3#button_rectangle_depth_flat");
+    padding-bottom: 8px;
+}
+
+.buttonBGBlueDepth:active {
+    background-image: url("project://database/Assets/Sprites/KenneyUI/Blue/Double/button_rectangle_flat.png?fileID=21300000&guid=c2d26c16751e4ab1683a2134ee9d1177&type=3#button_rectangle_flat");
+    padding-bottom: 0;
+}
+
+.buttonBGBlueDepthBorder:active {
+    background-image: url("project://database/Assets/Sprites/KenneyUI/Blue/Double/button_rectangle_border.png?fileID=21300000&guid=596849a3d1530746b88f71fe978b0eda&type=3#button_rectangle_border");
+    padding-bottom: 0;
+}
+
+.textSmallWhite {
+    -unity-font-definition: var(--major-font);
+    color: var(--light-text);
+    font-size: var(--small-text-size);
+    -unity-font-style: bold;
+    letter-spacing: var(--major-font-letter-spacing);
+}
+
+.textMiniDark {
+    -unity-font-definition: var(--major-font);
+    color: var(--dark-text);
+    font-size: var(--mini-text-size);
+    -unity-font-style: bold;
+    letter-spacing: var(--major-font-letter-spacing);
+}
+
+.textLargeDark {
+    -unity-font-definition: var(--major-font);
+    color: var(--dark-text);
+    font-size: var(--large-text-size);
+    -unity-font-style: bold;
+    letter-spacing: var(--major-font-letter-spacing);
+}
+
+.textSmallDark {
+    -unity-font-definition: var(--major-font);
+    color: var(--dark-text);
+    font-size: var(--small-text-size);
+    -unity-font-style: bold;
+    letter-spacing: var(--major-font-letter-spacing);
+}
+
+.textMiniWhite {
+    -unity-font-definition: var(--major-font);
+    color: var(--light-text);
+    font-size: var(--mini-text-size);
+    -unity-font-style: bold;
+    letter-spacing: var(--major-font-letter-spacing);
+}
+
+.textNormalMiniWhite {
+    -unity-font-definition: var(--major-font);
+    color: var(--light-text);
+    font-size: var(--mini-text-size);
+    letter-spacing: var(--major-font-letter-spacing);
+}
+
+.input-field Label {
+    -unity-font-definition: var(--major-font);
+    color: var(--dark-text);
+    font-size: var(--small-text-size);
+    -unity-font-style: bold;
+    letter-spacing: var(--major-font-letter-spacing);
+}
+
+.input-field #unity-text-input {
+    -unity-font-definition: var(--major-font);
+    color: var(--dark-text);
+    font-size: var(--small-text-size);
+    -unity-font-style: bold;
+    letter-spacing: var(--major-font-letter-spacing);
+}
+
+.input-field Label {
+    width: 350px;
+}
+
+.input-field #unity-text-input {
+    -unity-font-style: normal;
+    color: rgb(136, 136, 136);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("project://database/Assets/Sprites/KenneyUI/Extra/Double/input_square.png?fileID=21300000&guid=b71ed61da2befb6019fd31673ca7f2ae&type=3#input_square");
+}
+
+.divider {
+    height: 55px;
+    flex-direction: row;
+    align-items: center;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.divider > VisualElement {
+    background-image: url("project://database/Assets/Sprites/KenneyUI/Extra/Double/divider_edges.png?fileID=21300000&guid=1f337cc9146ec8b4791d26dd46d2a231&type=3#divider_edges");
+    flex-grow: 1;
+    height: 8px;
 }

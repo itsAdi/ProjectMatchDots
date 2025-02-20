@@ -1,5 +1,4 @@
 .window {
-    background-color: rgb(253, 225, 35);
     width: 800px;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
@@ -8,8 +7,9 @@
     flex-direction: column;
     padding-top: 15px;
     padding-right: 15px;
-    padding-bottom: 15px;
+    padding-bottom: 23px;
     padding-left: 15px;
+    background-image: url("project://database/Assets/Sprites/KenneyUI/Grey/Double/button_square_depth_flat.png?fileID=21300000&guid=0d1fe2899199bb1b5b92d9f512cea684&type=3#button_square_depth_flat");
 }
 
 .score {
@@ -21,13 +21,7 @@
     height: 100px;
     overflow: hidden;
     align-items: center;
-    margin-top: 20px;
-}
-
-.buttons {
-    height: 100px;
-    overflow: hidden;
-    align-items: center;
+    margin-bottom: 20px;
 }
 
 .scoreDetailContainer {
@@ -42,7 +36,7 @@
     height: 100%;
     justify-content: center;
     align-items: center;
-    background-color: rgb(173, 98, 0);
+    background-color: rgb(46, 174, 230);
     opacity: 0;
 }
 
