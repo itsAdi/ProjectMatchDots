@@ -90,7 +90,7 @@
     margin-right: 0;
     margin-bottom: 0;
     margin-left: 0;
-    background-color: rgb(164, 56, 0);
+    background-color: rgb(217, 219, 230);
 }
 
 .turnTimerBar .unity-progress-bar__background {
@@ -98,7 +98,11 @@
     border-right-width: 0;
     border-bottom-width: 0;
     border-left-width: 0;
-    background-color: rgb(255, 128, 80);
+    background-color: rgb(255, 99, 122);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
 }
 
 .turnTimerBar {

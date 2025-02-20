@@ -21,7 +21,7 @@ namespace KemothStudios
         private int[] _playerAvatarIndices = new int[] { 0, 1 }; // Indices of the selected player avatar
         private int _enabledPlayerAvatarTab; // actually the index to use in _playerAvatarIndices
         private bool _updatingAvatarsView;
-        private VisualElement _settingsCog;
+        private Button _settingsCog;
         private ShowMessageEvent _showMessageEvent;
 
         private void Start()
@@ -53,7 +53,7 @@ namespace KemothStudios
                 }
             });
 
-            _settingsCog = _uiDoument.rootVisualElement.Q<VisualElement>("settingsCog");
+            _settingsCog = _uiDoument.rootVisualElement.LookFor<Button>("settingsButton", "Failed to found settings button");
             _settingsCog.RegisterCallback<ClickEvent>(ShowSettings);
 
             if (_playerAvatars.GetAvatarsCount >= 2) // Checking for more than 2 because we have a 2 player setup and we need atleast 2 avatars in collection

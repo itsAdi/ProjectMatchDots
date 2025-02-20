@@ -90,7 +90,7 @@ namespace KemothStudios
                 
                 _isInitialized = true;
             }
-            catch (Exception _)
+            catch (Exception)
             {
                 DebugUtility.LogColored("red", "Initializing SettingsUI failed !!!");
                 throw;

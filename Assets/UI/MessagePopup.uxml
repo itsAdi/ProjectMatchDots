@@ -4,10 +4,10 @@
     <engine:VisualElement name="messagePopupContainer" picking-mode="Ignore" style="flex-grow: 1; justify-content: flex-end;">
         <engine:VisualElement name="windowContainer" class="show">
             <engine:VisualElement name="window">
-                <engine:Label text="Message text" name="messageText" display-tooltip-when-elided="false" triple-click-selects-line="false" double-click-selects-word="false" emoji-fallback-support="false" enable-rich-text="false" style="font-size: 35px; text-overflow: ellipsis; white-space: pre-wrap; max-height: 180px; overflow: hidden;" />
+                <engine:Label text="Message text" name="messageText" display-tooltip-when-elided="false" triple-click-selects-line="false" double-click-selects-word="false" emoji-fallback-support="false" enable-rich-text="false" class="textMiniDark" style="text-overflow: ellipsis; white-space: pre-wrap; max-height: 180px; overflow: hidden;" />
                 <engine:VisualElement name="responseButtonContainer" style="align-items: center; margin-top: 20px;">
-                    <engine:VisualElement name="responseButton" style="width: 200px; height: 65px;">
-                        <engine:Button text="Ok" class="minorButton" />
+                    <engine:VisualElement name="responseButton">
+                        <engine:Button text="Ok" display-tooltip-when-elided="false" double-click-selects-word="false" triple-click-selects-line="false" emoji-fallback-support="false" enable-rich-text="false" class="unity-button-override buttonBGBlueDepth" style="width: 280px; height: 80px;" />
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
