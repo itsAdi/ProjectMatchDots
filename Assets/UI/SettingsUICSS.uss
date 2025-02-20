@@ -20,12 +20,14 @@ Toggle > .unity-toggle__input > .unity-toggle__checkmark {
     background-image: url("project://database/Assets/Sprites/sound-on.png?fileID=21300000&guid=a62fa11f2137eb5fba7374a1f1997512&type=3#sound-on");
     width: 100%;
     height: 100%;
+    -unity-background-image-tint-color: rgb(62, 62, 62);
 }
 
 Toggle:checked > .unity-toggle__input > .unity-toggle__checkmark {
     background-image: url("project://database/Assets/Sprites/sound-off.png?fileID=21300000&guid=2413219846f1b5cd28c56fd5a365a99e&type=3#sound-off");
     width: 100%;
     height: 100%;
+    -unity-background-image-tint-color: rgb(62, 62, 62);
 }
 
 #volumeSlider Slider .unity-base-slider__tracker {
@@ -35,7 +37,6 @@ Toggle:checked > .unity-toggle__input > .unity-toggle__checkmark {
     margin-bottom: 0;
     margin-left: 5px;
     top: auto;
-    background-color: rgb(154, 65, 0);
     border-top-width: 0;
     border-right-width: 0;
     border-bottom-width: 0;
@@ -45,24 +46,28 @@ Toggle:checked > .unity-toggle__input > .unity-toggle__checkmark {
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
     flex-grow: 1;
+    background-image: url("project://database/Assets/Sprites/KenneyUI/Blue/Default/slide_horizontal_color.png?fileID=21300000&guid=112deaef7bffe025e8dd17b157a90b07&type=3#slide_horizontal_color");
+    background-color: rgba(0, 0, 0, 0);
+    -unity-slice-scale: 2px;
 }
 
 #volumeSlider Slider {
     overflow: visible;
-    height: 35px;
+    height: 32px;
+    min-width: auto;
+    min-height: auto;
 }
 
 #volumeSlider Slider .unity-base-slider__dragger {
     width: 50px;
     height: 50px;
     margin-top: -25px;
-    background-image: url("project://database/Assets/Sprites/plain-circle.png?fileID=21300000&guid=c90409de982b252a69331c2d1b8c2780&type=3#plain-circle");
+    background-image: url("project://database/Assets/Sprites/KenneyUI/Blue/Double/icon_circle.png?fileID=21300000&guid=d20928bb95e89bc999a96acc7869bebc&type=3#icon_circle");
     border-top-width: 0;
     border-right-width: 0;
     border-bottom-width: 0;
     border-left-width: 0;
     background-color: rgba(0, 0, 0, 0);
-    -unity-background-image-tint-color: rgb(82, 35, 0);
 }
 
 .settingsWindowDown {

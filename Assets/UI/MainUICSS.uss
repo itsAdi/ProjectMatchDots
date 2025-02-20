@@ -21,24 +21,26 @@
 }
 
 #playerIconTab {
-    margin-top: 8px;
-    margin-right: 8px;
-    margin-bottom: 8px;
-    margin-left: 8px;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 0;
     overflow: visible;
     justify-content: center;
     align-items: center;
-    flex-grow: 1;
+    height: 100px;
+    width: 40%;
 }
 
 #playerIconTab .unity-radio-button__input {
     flex-grow: 1;
     flex-shrink: 1;
     height: 100%;
+}
+
+.textTitle {
+    -unity-font-definition: url("project://database/Assets/Fonts/Knewave-Regular.ttf?fileID=12800000&guid=245d90b7b8ba67bf1b81dc3ff9309a17&type=3#Knewave-Regular");
+    color: rgb(14, 187, 121);
+    font-size: 137px;
+    text-shadow: 2px 5px 1px rgb(27, 116, 156);
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgb(97, 97, 98);
 }
 
 #playerIconTab .unity-radio-button__checkmark-background {
@@ -52,27 +54,32 @@
     padding-left: 0;
     width: 100%;
     height: 100%;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
     border-left-color: rgba(0, 0, 0, 0);
     border-right-color: rgba(0, 0, 0, 0);
     border-top-color: rgba(0, 0, 0, 0);
     border-bottom-color: rgba(0, 0, 0, 0);
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    background-color: rgb(154, 65, 0);
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("project://database/Assets/Sprites/KenneyUI/Grey/Double/button_rectangle_flat.png?fileID=21300000&guid=d658a4d1116a9646eb15932f5e946494&type=3#button_rectangle_flat");
 }
 
 #playerIconTab .unity-radio-button__checkmark {
     width: 100%;
     height: 100%;
-    border-bottom-right-radius: 0;
+    border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-image: url("project://database/Assets/Sprites/KenneyUI/Blue/Double/button_rectangle_flat.png?fileID=21300000&guid=c2d26c16751e4ab1683a2134ee9d1177&type=3#button_rectangle_flat");
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    background-color: rgba(0, 0, 0, 0);
 }
 
 #playerIconTab Label {
     position: absolute;
-    color: rgb(255, 255, 255);
-    font-size: 37px;
-    -unity-font-style: bold;
 }
 
 #iconsGrid GroupBox {
@@ -82,12 +89,12 @@
     margin-right: 0;
     margin-bottom: 0;
     margin-left: 0;
-    flex-grow: 1;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 0;
     justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    flex-grow: 1;
 }
 
 .gridIcon > .unity-radio-button__input {

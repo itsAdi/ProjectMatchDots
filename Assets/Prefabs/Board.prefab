@@ -107,5 +107,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cellCompletionDelay: 0.15
-  _boardSceneColor: {r: 0.74509805, g: 0.5019608, b: 0.24313726, a: 0}
+  _boardSceneColor: {r: 0.18039216, g: 0.68235296, b: 0.9137255, a: 1}
   _boardData: {fileID: 11400000, guid: d2d1d0d8be2a55d448e8db404535a729, type: 2}

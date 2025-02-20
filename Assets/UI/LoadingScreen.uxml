@@ -1,7 +1,7 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI/LoadingScreen.uss?fileID=7433441132597879392&amp;guid=3d8d9793eb24e7cd5b64d3b331985d9e&amp;type=3#LoadingScreen" />
     <Style src="project://database/Assets/UI/CommonUICSS.uss?fileID=7433441132597879392&amp;guid=2ae463346034a1b42985f16525aed222&amp;type=3#CommonUICSS" />
+    <Style src="project://database/Assets/UI/LoadingScreen.uss?fileID=7433441132597879392&amp;guid=3d8d9793eb24e7cd5b64d3b331985d9e&amp;type=3#LoadingScreen" />
     <engine:VisualElement name="background" class="bg fitScreen" style="justify-content: center; transition-property: opacity; transition-duration: 2s;">
-        <LabelAutoFit text="Loading..." ratio="1" style="color: rgb(255, 255, 255); font-size: 120px; -unity-text-align: upper-center;" />
+        <LabelAutoFit text="Loading..." ratio="1" class="textSmallWhite" style="font-size: 120px; -unity-text-align: upper-center;" />
     </engine:VisualElement>
 </engine:UXML>
