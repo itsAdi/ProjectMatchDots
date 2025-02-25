@@ -20,7 +20,7 @@ namespace KemothStudios
             _checkGameResult = new EventBinding<BoardReadyAfterDrawLineEvent>(CheckGameOver);
             EventBus<BoardReadyAfterDrawLineEvent>.RegisterBinding(_checkGameResult);
 
-            _turnTimer = new EventBinding<TurnTimerElapsedEvent>(CheckPlayerLivesForGameOver);
+            _turnTimer = new EventBinding<TurnTimerElapsedEvent>(CheckPlayerTimeForGameOver);
             EventBus<TurnTimerElapsedEvent>.RegisterBinding(_turnTimer);
         }
 
@@ -49,20 +49,20 @@ namespace KemothStudios
                 EventBus<GameResultCheckedEvent>.RaiseEvent(new GameResultCheckedEvent());
         }
         
-        private void CheckPlayerLivesForGameOver()
+        private void CheckPlayerTimeForGameOver()
         {
-            int playersWithNonZeroLives = 0;
+            int playersWithNonZeroTime = 0;
             Player flag = default;
             foreach (Player player in _gameData.Players)
             {
-                if (player.GetRemainingLives > 0)
+                if (player.GetRemainingTime > 0)
                 {
-                    playersWithNonZeroLives++;
+                    playersWithNonZeroTime++;
                     flag = player;
                 }
             }
             
-            if(playersWithNonZeroLives == 1) // if only one player has more than zero lives means all other players are out and this guy is the winner
+            if(playersWithNonZeroTime == 1) // if only one player has more than zero lives means all other players are out and this guy is the winner
                 EventBus<PlayerWonEvent>.RaiseEvent(new PlayerWonEvent(flag));
             else
                 EventBus<GameResultCheckedEvent>.RaiseEvent(new GameResultCheckedEvent());

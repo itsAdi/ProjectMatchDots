@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using KemothStudios.Utility;
 using KemothStudios.Utility.Events;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 using ProgressBar = KemothStudios.UI.ProgressBar;
 
@@ -11,7 +12,7 @@ namespace KemothStudios
 {
     public class TurnTimer : MonoBehaviour
     {
-        [SerializeField] private PlayerLivesConfigSO _playerLivesConfig;
+        [SerializeField] private PlayerTimeConfigSO _playerTimeConfig;
         [SerializeField] private UIDocument _uiDocument;
         [SerializeField] private GameDataSO _gameData;
 
@@ -21,13 +22,13 @@ namespace KemothStudios
         private CancellationTokenSource _cancellationToken; // this token will be used in task and will be a linked token
         private ProgressBar[] _turnTimerBars;
         private Label[] _playerLifeLabels;
-    
+
         private void Start()
         {
-            Statics.Assert(_playerLivesConfig != null, $"{nameof(PlayerLivesConfigSO)} is not provided to {nameof(TurnTimer)}");
+            Statics.Assert(_playerTimeConfig != null, $"{nameof(PlayerTimeConfigSO)} is not provided to {nameof(TurnTimer)}");
             Statics.Assert(_gameData != null, $"{nameof(GameDataSO)} is not provided to {nameof(TurnTimer)}");
             Statics.Assert(_uiDocument != null, $"UI document is not provided to {nameof(TurnTimer)}");
-            
+
             _playerTurnStarted = new EventBinding<TurnStartedEvent>(StartTimer);
             EventBus<TurnStartedEvent>.RegisterBinding(_playerTurnStarted);
 
@@ -43,7 +44,7 @@ namespace KemothStudios
                 {
                     Label playerLifeLabel = query.AtIndex(i);
                     _playerLifeLabels[i] = playerLifeLabel;
-                    UpdatePlayerLives(i, _playerLivesConfig.MaxLives);
+                    UpdatePlayerTime(i, _playerTimeConfig.MaxPlayerTime);
                 }
             }
             catch (Exception e)
@@ -51,16 +52,16 @@ namespace KemothStudios
                 EventBus<ShowMessageEvent>.RaiseEvent(new ShowMessageEvent("Exception creating player lives labels, game will not continue"));
                 DebugUtility.LogException(e);
             }
+
             try
             {
                 _turnTimerBars = new ProgressBar[playerCount];
                 UQueryBuilder<ProgressBar> query = _uiDocument.rootVisualElement.Query<ProgressBar>("turnTimer");
                 for (int i = 0; i < playerCount; i++)
                 {
-                    ProgressBar progressBar = query.AtIndex(i);
-                    progressBar.FillAmount = 0f;
-                    progressBar.visible = false;
-                    _turnTimerBars[i] = progressBar;
+                    ProgressBar p = query.AtIndex(i);
+                    p.FillAmount = 100f;
+                    _turnTimerBars[i] = p;
                 }
             }
             catch (Exception e)
@@ -77,60 +78,55 @@ namespace KemothStudios
             EventBus<TurnStartedEvent>.UnregisterBinding(_playerTurnStarted);
             EventBus<TurnEndedEvent>.UnregisterBinding(_playerDrawLine);
         }
-    
+
         private void StartTimer(TurnStartedEvent turnData)
         {
-            int newPlayerIndex = turnData.Player.PlayerIndex;
-            _turnTimerBars[newPlayerIndex].visible = true;
-            _turnTimerBars[newPlayerIndex].FillAmount = 100f;
-            
             _stopTimerToken = new CancellationTokenSource();
             _cancellationToken = CancellationTokenSource.CreateLinkedTokenSource(_stopTimerToken.Token, destroyCancellationToken);
-            
+
             RunTimer(turnData.Player).Forget();
         }
-        
+
         private void StopTimer(TurnEndedEvent turnData)
         {
             _stopTimerToken.Cancel();
             _stopTimerToken.Dispose();
             _cancellationToken.Dispose();
-            
-            int newPlayerIndex = turnData.Player.PlayerIndex;
-            _turnTimerBars[newPlayerIndex].visible = false;
-            _turnTimerBars[newPlayerIndex].FillAmount = 0f;
         }
 
         private async UniTaskVoid RunTimer(Player forPlayer)
         {
             try
             {
-                float maxTime = _playerLivesConfig.TimeToDeductLife;
-                float currentTime = maxTime;
+                int maxTime = _playerTimeConfig.MaxPlayerTime;
+                int currentTime = forPlayer.GetRemainingTime;
                 int playerIndex = forPlayer.PlayerIndex;
                 while (_turnTimerBars[playerIndex].FillAmount > 0f)
                 {
-                    await UniTask.WaitForEndOfFrame(_cancellationToken.Token);
-                    currentTime = Mathf.Max(0f, currentTime - Time.deltaTime);
-                    _turnTimerBars[playerIndex].FillAmount = Mathf.InverseLerp(0f, maxTime, currentTime) * 100f;
+                    await UniTask.WaitForSeconds(1f, cancellationToken: _cancellationToken.Token);
+                    currentTime = Mathf.Max(0, currentTime - 1);
+                    _turnTimerBars[playerIndex].FillAmount = Mathf.InverseLerp(0, maxTime, currentTime) * 100f;
+                    UpdatePlayerTime(playerIndex, currentTime);
                 }
-                int remainingLives = forPlayer.GetRemainingLives;
-                remainingLives--;
-                UpdatePlayerLives(playerIndex, remainingLives);
+
                 EventBus<TurnTimerElapsedEvent>.RaiseEvent(new TurnTimerElapsedEvent());
             }
-            catch(OperationCanceledException){} // when a task will be cancelled this will prevent catch block below from executing
+            catch (OperationCanceledException)
+            {
+            } // when a task will be cancelled this will prevent catch block below from executing
             catch (Exception e)
             {
                 DebugUtility.LogException(e);
             }
         }
 
-        private void UpdatePlayerLives(int playerIndex, int lives)
+        private void UpdatePlayerTime(int playerIndex, int seconds)
         {
-            if (_gameData.TrySetPlayerLives(playerIndex, lives))
+            if (_gameData.TrySetPlayerTime(playerIndex, seconds))
             {
-                _playerLifeLabels[playerIndex].text = $"{lives}";
+                int m = seconds / 60;
+                int s = seconds % 60;
+                _playerLifeLabels[playerIndex].text = $"{m}:{s}";
             }
             else
             {

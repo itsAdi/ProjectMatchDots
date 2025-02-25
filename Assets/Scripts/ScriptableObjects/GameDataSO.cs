@@ -51,23 +51,23 @@ namespace KemothStudios
             return false;
         }
 
-        public bool TryGetPlayerLives(int playerIndex, out int lives)
+        public bool TryGetPlayerTime(int playerIndex, out int lives)
         {
             if (playerIndex >= 0 && playerIndex < _playerCount)
             {
-                lives = _players[playerIndex].RemainingLivesLocal;
+                lives = _players[playerIndex].RemainingTimeLocal;
                 return true;
             }
             lives = -1;
             return false;
         }
 
-        public bool TrySetPlayerLives(int playerIndex, int lives)
+        public bool TrySetPlayerTime(int playerIndex, int lives)
         {
             if (playerIndex >= 0 && playerIndex < _playerCount)
             {
                 Player p = _players[playerIndex];
-                p.RemainingLivesLocal = lives;
+                p.RemainingTimeLocal = lives;
                 _players[playerIndex] = p;
                 return true;
             }
@@ -106,7 +106,7 @@ namespace KemothStudios
         
         private GameDataSO _gameDataSO;
         private int _score;
-        private int _remainingLives;
+        private int _remainingTime;
 
         public Player(string name, int avatarIndex, int playerIndex, GameDataSO gameData)
         {
@@ -115,13 +115,13 @@ namespace KemothStudios
             PlayerIndex = playerIndex;
             _gameDataSO = gameData;
             _score = 0;
-            _remainingLives = 0;
+            _remainingTime = 0;
         }
         
-        public int GetRemainingLives {
+        public int GetRemainingTime {
             get
             {
-                if (!_gameDataSO.TryGetPlayerLives(PlayerIndex, out var lives))
+                if (!_gameDataSO.TryGetPlayerTime(PlayerIndex, out var lives))
                     DebugUtility.LogError($"Failed to get remaining lives for player on index {PlayerIndex}");
                 return lives;
             }
@@ -148,12 +148,12 @@ namespace KemothStudios
         
         /// <summary>
         /// <para>Used by <b>GameDataSO</b> to get and set remaining lives</para>
-        /// <para>To get remaining lives either use <see cref="GetRemainingLives"/> or <see cref="GameDataSO.TryGetPlayerLives"/> and to set remaining lives only use <see cref="GameDataSO.TrySetPlayerLives"/></para>
+        /// <para>To get remaining lives either use <see cref="GetRemainingTime"/> or <see cref="GameDataSO.TryGetPlayerTime"/> and to set remaining lives only use <see cref="GameDataSO.TrySetPlayerTime"/></para>
         /// </summary>
-        public int RemainingLivesLocal
+        public int RemainingTimeLocal
         {
-            get => _remainingLives;
-            set => _remainingLives = value;
+            get => _remainingTime;
+            set => _remainingTime = value;
         }
     }
 }

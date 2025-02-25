@@ -284,7 +284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50419a3cf3c5e1d3498e6b9d5a454afe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerLivesConfig: {fileID: 11400000, guid: 862273080bd028e6c9171422711a88e0, type: 2}
+  _playerTimeConfig: {fileID: 11400000, guid: 862273080bd028e6c9171422711a88e0, type: 2}
   _uiDocument: {fileID: 1257722661}
   _gameData: {fileID: 11400000, guid: 99e2d00b450b4ed4483bd8baea2c3fc6, type: 2}
 --- !u!1660057539 &9223372036854775807
